@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
     SafeAreaView,
@@ -13,65 +13,35 @@ import {
 import BottomNavBar from "./BottomNavBar"
 
 import { useSession, useUser, useClerk } from "@clerk/clerk-expo";
-import { getFirestore, collection, doc, getDoc, setDoc } from "firebase/firestore";
-import firebaseConfig from "../firebaseConfig";
-import { initializeApp } from "firebase/app";
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { useMood } from "../context/MoodContext";
 
 import { useNavigation } from '@react-navigation/native';
 
 export default function ChangeMood({ route, navigation }) {
-    const {user} = useUser();
+    const { user } = useUser();
+    const { updateMood } = useMood();
     const [currentlyChosenColor, setCurrentlyChosenColor] = useState('')
     const { day, monthAndYear, setReloadPage } = route.params;
     const [changingMoodLoading, setChangingMoodLoading] = useState(false)
 
     async function updateSelectedDateMood(date, userEmotionOption, setReloadPage) {
-      try {
-        // Check if the document ID is null or undefined
-        if (!user?.id) {
-          console.log("Document ID is null or undefined.");
-          return;
-        }
-        if (setReloadPage === null || setReloadPage === undefined) {
+        try {
+            if (!user?.id) return;
+
+            setChangingMoodLoading(true);
+
+            // Allow updateMood to handle the logic
+            await updateMood(date, userEmotionOption);
+
+            if (setReloadPage) setReloadPage();
+
+            setChangingMoodLoading(false);
             navigation.navigate('Home');
-            return;
-        }
 
-        setChangingMoodLoading(true)
-        const collectionRef = collection(db, 'users');
-        const documentRef = doc(collectionRef, user?.id);
-
-        // Check if the document exists
-        const documentSnapshot = await getDoc(documentRef);
-
-        let updatedCurrentsMonthCalendarData;
-        const oldMonthCalendarData = documentSnapshot.data()['currentMonthCalendar']
-        console.log(oldMonthCalendarData)
-        for (let i = 0; i < oldMonthCalendarData.length; i++) {
-            for (let j = 0; j < oldMonthCalendarData[i].week.length; j++) {
-            if (oldMonthCalendarData[i].week[j].day == date) {
-                oldMonthCalendarData[i].week[j].value = userEmotionOption;
-            }
-            }
+        } catch (error) {
+            console.error("Error updating mood:", error);
+            setChangingMoodLoading(false);
         }
-        updatedCurrentsMonthCalendarData = oldMonthCalendarData;
-        // log the entire updatedCurrentsMonthCalendarData, as a string.
-        console.log("updatedCurrentsMonthCalendarData: ", JSON.stringify(updatedCurrentsMonthCalendarData))
-        console.log("updatedCurrentsMonthCalendarData: ", JSON.stringify(updatedCurrentsMonthCalendarData))
-        if (documentSnapshot.exists()) {
-            console.log("updating user document exists")
-            await setDoc(documentRef, {currentMonthCalendar: updatedCurrentsMonthCalendarData}, {merge: true});
-            console.log(`New document with ID ${user?.id} created.`);
-        }
-        setChangingMoodLoading(true)
-        setReloadPage()
-        navigation.navigate('Home');
-      } catch (error) {
-        console.error("Error updating document:", error);
-      }
     }
 
 
