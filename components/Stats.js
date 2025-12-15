@@ -23,6 +23,7 @@ export default function Stats({ route, navigation }) {
     const { user } = useUser()
     const { userData } = useMood();
     const [pieChartData, setPieChartData] = useState({})
+    const [toggleTimeFramePopup, setToggleTimeFramePopup] = useState(false)
 
     //previousMonths
 
