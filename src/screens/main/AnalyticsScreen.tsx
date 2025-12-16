@@ -12,12 +12,18 @@ import {
 } from 'react-native-paper';
 import { PieChart, LineChart } from 'react-native-gifted-charts';
 import { useMoodLogs } from '../../hooks/useMoodLogs';
-import { format, subDays, subMonths, subYears, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MOOD_COLORS_MAP } from '../../utils/moodLogic';
+import {
+    TimeRange,
+    filterLogsByDate,
+    calculateMoodCounts,
+    calculateAverageMood,
+    calculateTopTags
+} from '../../utils/analyticsLogic';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-
-type TimeRange = '7d' | '30d' | '3m' | '6m' | '1y' | 'all';
 
 const RANGE_LABELS: Record<TimeRange, string> = {
     '7d': 'Last 7 Days',
@@ -36,50 +42,22 @@ export const AnalyticsScreen = () => {
 
     // Helper to filter logs by range
     const filteredLogs = useMemo(() => {
-        const now = new Date();
-        let cutoffDate: Date | null = null;
-
-        switch (range) {
-            case '7d': cutoffDate = subDays(now, 7); break;
-            case '30d': cutoffDate = subDays(now, 30); break;
-            case '3m': cutoffDate = subMonths(now, 3); break;
-            case '6m': cutoffDate = subMonths(now, 6); break;
-            case '1y': cutoffDate = subYears(now, 1); break;
-            case 'all': cutoffDate = null; break;
-        }
-
-        if (!cutoffDate) return logs;
-        return logs.filter(log => new Date(log.date) >= cutoffDate);
+        return filterLogsByDate(logs, range);
     }, [logs, range]);
 
     // pie chart data: Mood Distribution
     const pieData = useMemo(() => {
-        const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        filteredLogs.forEach(log => {
-            if (counts[log.moodRating] !== undefined) {
-                counts[log.moodRating]++;
-            }
-        });
-
+        const counts = calculateMoodCounts(filteredLogs);
         const total = filteredLogs.length;
         if (total === 0) return [];
 
-        // Modern colors corresponding to mood (Red -> Green)
-        const moodColors: Record<number, string> = {
-            1: '#FF5252', // Very Sad
-            2: '#FFB74D', // Sad
-            3: '#FFEB3B', // Neutral
-            4: '#9CCC65', // Happy
-            5: '#66BB6A', // Very Happy
-        };
-
         // Using simple labels or legend instead of on-chart text if plain looking
         return [
-            { value: counts[1], color: moodColors[1], label: '😢' },
-            { value: counts[2], color: moodColors[2], label: '😕' },
-            { value: counts[3], color: moodColors[3], label: '😐' },
-            { value: counts[4], color: moodColors[4], label: '🙂' },
-            { value: counts[5], color: moodColors[5], label: '🤩' },
+            { value: counts[1], color: MOOD_COLORS_MAP[1], label: '😢' },
+            { value: counts[2], color: MOOD_COLORS_MAP[2], label: '😕' },
+            { value: counts[3], color: MOOD_COLORS_MAP[3], label: '😐' },
+            { value: counts[4], color: MOOD_COLORS_MAP[4], label: '🙂' },
+            { value: counts[5], color: MOOD_COLORS_MAP[5], label: '🤩' },
         ].filter(item => item.value > 0);
     }, [filteredLogs]);
 
@@ -97,23 +75,11 @@ export const AnalyticsScreen = () => {
 
     // Top Tags
     const topTags = useMemo(() => {
-        const tagCounts: Record<string, number> = {};
-        filteredLogs.forEach(log => {
-            log.tags.forEach(tag => {
-                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-            });
-        });
-
-        return Object.entries(tagCounts)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 5)
-            .map(([tag, count]) => ({ tag, count }));
+        return calculateTopTags(filteredLogs);
     }, [filteredLogs]);
 
     const averageMood = useMemo(() => {
-        if (filteredLogs.length === 0) return 0;
-        const sum = filteredLogs.reduce((acc, log) => acc + log.moodRating, 0);
-        return (sum / filteredLogs.length).toFixed(1);
+        return calculateAverageMood(filteredLogs);
     }, [filteredLogs]);
 
 
