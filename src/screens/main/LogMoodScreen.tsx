@@ -100,20 +100,18 @@ export const LogMoodScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1}}>
+      style={styles.keyboardAvoidingView}>
       <ScrollView
         contentContainerStyle={[
           styles.container,
           {backgroundColor: theme.colors.background},
         ]}>
-        <Text
-          variant="headlineMedium"
-          style={{textAlign: 'center', marginBottom: 24}}>
+        <Text variant="headlineMedium" style={styles.title}>
           How are you feeling?
         </Text>
 
         <View style={styles.section}>
-          <Text variant="titleMedium" style={{marginBottom: 12}}>
+          <Text variant="titleMedium" style={styles.label}>
             Mood (1-5)
           </Text>
           <Controller
@@ -139,7 +137,7 @@ export const LogMoodScreen = () => {
         </View>
 
         <View style={styles.section}>
-          <Text variant="titleMedium" style={{marginBottom: 12}}>
+          <Text variant="titleMedium" style={styles.label}>
             Tags
           </Text>
           <View style={styles.chipContainer}>
@@ -157,7 +155,7 @@ export const LogMoodScreen = () => {
         </View>
 
         <View style={styles.section}>
-          <Text variant="titleMedium" style={{marginBottom: 12}}>
+          <Text variant="titleMedium" style={styles.label}>
             Note
           </Text>
           <Controller
@@ -191,12 +189,22 @@ export const LogMoodScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   container: {
     padding: 24,
     flexGrow: 1,
   },
+  title: {
+    textAlign: 'center',
+    marginBottom: 24,
+  },
   section: {
     marginBottom: 24,
+  },
+  label: {
+    marginBottom: 12,
   },
   chipContainer: {
     flexDirection: 'row',

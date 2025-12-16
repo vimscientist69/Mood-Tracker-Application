@@ -9,10 +9,7 @@ export const SettingsScreen = () => {
   return (
     <View style={styles.container}>
       <Text variant="headlineMedium">Settings</Text>
-      <Button
-        mode="contained"
-        onPress={() => signOut()}
-        style={{marginTop: 20}}>
+      <Button mode="contained" onPress={() => signOut()} style={styles.button}>
         Sign Out
       </Button>
     </View>
@@ -24,5 +21,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  button: {
+    marginTop: 20,
   },
 });
