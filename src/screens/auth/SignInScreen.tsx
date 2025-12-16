@@ -78,6 +78,7 @@ export const SignInScreen = () => {
                     name="email"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
+                            testID="email-input"
                             label="Email"
                             mode="outlined"
                             onBlur={onBlur}
@@ -98,6 +99,7 @@ export const SignInScreen = () => {
                     name="password"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
+                            testID="password-input"
                             label="Password"
                             mode="outlined"
                             secureTextEntry
@@ -113,6 +115,7 @@ export const SignInScreen = () => {
                 )}
 
                 <Button
+                    testID="sign-in-button"
                     mode="contained"
                     onPress={handleSubmit(onSignInPress)}
                     loading={loading}

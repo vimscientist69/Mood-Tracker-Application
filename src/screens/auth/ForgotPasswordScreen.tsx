@@ -74,6 +74,7 @@ export const ForgotPasswordScreen = () => {
                     name="email"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
+                            testID="email-input"
                             label="Email"
                             mode="outlined"
                             onBlur={onBlur}
@@ -88,6 +89,7 @@ export const ForgotPasswordScreen = () => {
                 {errors.email && <HelperText type="error">{errors.email.message}</HelperText>}
 
                 <Button
+                    testID="send-reset-button"
                     mode="contained"
                     onPress={handleSubmit(onSubmit)}
                     loading={loading}

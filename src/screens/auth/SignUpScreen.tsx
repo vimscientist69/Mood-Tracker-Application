@@ -171,6 +171,7 @@ export const SignUpScreen = () => {
                     name="email"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
+                            testID="email-input"
                             label="Email"
                             mode="outlined"
                             onBlur={onBlur}
@@ -182,15 +183,14 @@ export const SignUpScreen = () => {
                         />
                     )}
                 />
-                {errors.email && (
-                    <HelperText type="error">{errors.email.message}</HelperText>
-                )}
+                {errors.email && <HelperText type="error">{errors.email.message}</HelperText>}
 
                 <Controller
                     control={control}
                     name="password"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
+                            testID="password-input"
                             label="Password"
                             mode="outlined"
                             secureTextEntry
@@ -201,15 +201,14 @@ export const SignUpScreen = () => {
                         />
                     )}
                 />
-                {errors.password && (
-                    <HelperText type="error">{errors.password.message}</HelperText>
-                )}
+                {errors.password && <HelperText type="error">{errors.password.message}</HelperText>}
 
                 <Controller
                     control={control}
                     name="confirmPassword"
                     render={({ field: { onChange, onBlur, value } }) => (
                         <TextInput
+                            testID="confirm-password-input"
                             label="Confirm Password"
                             mode="outlined"
                             secureTextEntry
@@ -220,16 +219,17 @@ export const SignUpScreen = () => {
                         />
                     )}
                 />
-                {errors.confirmPassword && (
-                    <HelperText type="error">{errors.confirmPassword.message}</HelperText>
-                )}
+                {errors.confirmPassword && <HelperText type="error">{errors.confirmPassword.message}</HelperText>}
+
 
                 <Button
+                    testID="sign-up-button"
                     mode="contained"
                     onPress={handleSubmit(onSignUpPress)}
                     loading={loading}
                     disabled={loading}
-                    style={styles.button}>
+                    style={styles.button}
+                >
                     Sign Up
                 </Button>
 
