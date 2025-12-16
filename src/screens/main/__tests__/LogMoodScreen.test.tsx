@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, fireEvent, waitFor, act} from '@testing-library/react-native';
+import {render, fireEvent, waitFor} from '@testing-library/react-native';
 import {LogMoodScreen} from '../LogMoodScreen';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {Alert} from 'react-native';
@@ -48,7 +48,7 @@ describe('LogMoodScreen', () => {
   });
 
   it('renders correctly in Create Mode', () => {
-    const {getByText, getByPlaceholderText} = render(
+    const {getByText} = render(
       <PaperProvider>
         <LogMoodScreen />
       </PaperProvider>,

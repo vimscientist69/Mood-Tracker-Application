@@ -1,5 +1,3 @@
-import {MD3Theme} from 'react-native-paper';
-
 export const getMoodColor = (rating: number) => {
   switch (rating) {
     case 1:
