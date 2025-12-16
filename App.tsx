@@ -1,27 +1,29 @@
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View} from 'react-native';
-import {PaperProvider} from 'react-native-paper';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { PaperProvider } from 'react-native-paper';
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
+import { RootNavigator } from './src/navigation/RootNavigator';
+import { tokenCache } from './src/utils/tokenCache';
+import { AppPaperTheme } from './src/theme/theme';
 
-export default function App() {
-  return (
-    <SafeAreaProvider>
-      <PaperProvider>
-        <View style={styles.container}>
-          <Text>Mood Tracker V2 - Foundation Setup Complete</Text>
-          <StatusBar style="auto" />
-        </View>
-      </PaperProvider>
-    </SafeAreaProvider>
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+if (!publishableKey) {
+  throw new Error(
+    'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env',
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+      <ClerkLoaded>
+        <SafeAreaProvider>
+          <PaperProvider theme={AppPaperTheme}>
+            <RootNavigator />
+          </PaperProvider>
+        </SafeAreaProvider>
+      </ClerkLoaded>
+    </ClerkProvider>
+  );
+}
