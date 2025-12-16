@@ -8,6 +8,18 @@ import {SettingsScreen} from '../screens/main/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
+const HomeIcon = ({color, size}: {color: string; size: number}) => (
+  <MaterialCommunityIcons name="home" color={color} size={size} />
+);
+
+const AnalyticsIcon = ({color, size}: {color: string; size: number}) => (
+  <MaterialCommunityIcons name="chart-bar" color={color} size={size} />
+);
+
+const SettingsIcon = ({color, size}: {color: string; size: number}) => (
+  <MaterialCommunityIcons name="cog" color={color} size={size} />
+);
+
 export const MainTabNavigator = () => {
   const theme = useTheme();
 
@@ -26,9 +38,7 @@ export const MainTabNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons name="home" color={color} size={size} />
-          ),
+          tabBarIcon: HomeIcon,
           tabBarLabel: 'Home',
         }}
       />
@@ -36,13 +46,7 @@ export const MainTabNavigator = () => {
         name="Analytics"
         component={AnalyticsScreen}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons
-              name="chart-bar"
-              color={color}
-              size={size}
-            />
-          ),
+          tabBarIcon: AnalyticsIcon,
           tabBarLabel: 'Analytics',
         }}
       />
@@ -50,9 +54,7 @@ export const MainTabNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons name="cog" color={color} size={size} />
-          ),
+          tabBarIcon: SettingsIcon,
           tabBarLabel: 'Settings',
         }}
       />

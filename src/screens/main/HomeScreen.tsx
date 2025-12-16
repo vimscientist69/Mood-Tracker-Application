@@ -60,7 +60,7 @@ export const HomeScreen = () => {
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
       <View style={styles.header}>
         <Text variant="headlineMedium">Your Mood Calendar</Text>
-        <Text variant="bodyLarge" style={{opacity: 0.7}}>
+        <Text variant="bodyLarge" style={styles.subtitle}>
           Track your journey, one day at a time.
         </Text>
       </View>
@@ -111,6 +111,9 @@ const styles = StyleSheet.create({
   header: {
     padding: 24,
     paddingBottom: 12,
+  },
+  subtitle: {
+    opacity: 0.7,
   },
   calendarContainer: {
     margin: 16,
