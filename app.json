@@ -26,7 +26,8 @@
       "package": "com.vimscientist69.alma_mood_tracker"
     },
     "web": {
-      "favicon": "./assets/logo-without-text.png"
+      "favicon": "./assets/logo-without-text.png",
+      "bundler": "metro"
     },
     "extra": {
       "eas": {
