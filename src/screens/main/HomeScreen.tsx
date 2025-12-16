@@ -1,27 +1,10 @@
 import React, { useMemo } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { Text, FAB, useTheme, ActivityIndicator } from 'react-native-paper';
+import { View, StyleSheet, Alert, ScrollView } from 'react-native';
+import { Text, FAB, useTheme, ActivityIndicator, Card } from 'react-native-paper';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useMoodLogs } from '../../hooks/useMoodLogs';
-
-// Helper to get color for mood rating (5 = best, 1 = worst)
-const getMoodColor = (rating: number, theme: any) => {
-    switch (rating) {
-        case 5:
-            return '#4CAF50'; // Green
-        case 4:
-            return '#8BC34A'; // Light Green
-        case 3:
-            return '#FFEB3B'; // Yellow
-        case 2:
-            return '#FF9800'; // Orange
-        case 1:
-            return '#F44336'; // Red
-        default:
-            return theme.colors.primary;
-    }
-};
+import { getMoodColor } from '../../utils/moodLogic';
 
 export const HomeScreen = () => {
     const theme = useTheme();
@@ -34,7 +17,7 @@ export const HomeScreen = () => {
             marks[log.date] = {
                 customStyles: {
                     container: {
-                        backgroundColor: getMoodColor(log.moodRating, theme),
+                        backgroundColor: getMoodColor(log.moodRating),
                         borderRadius: 8,
                     },
                     text: {
@@ -45,7 +28,7 @@ export const HomeScreen = () => {
             };
         });
         return marks;
-    }, [logs, theme]);
+    }, [logs]);
 
     if (isLoading) {
         return (
@@ -56,44 +39,61 @@ export const HomeScreen = () => {
     }
 
     return (
-        <View
-            style={[styles.container, { backgroundColor: theme.colors.background }]}>
-            <View style={styles.header}>
-                <Text variant="headlineMedium">Your Mood Calendar</Text>
-                <Text variant="bodyLarge" style={styles.subtitle}>
-                    Track your journey, one day at a time.
-                </Text>
-            </View>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={styles.header}>
+                    <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.primary }}>
+                        Your Mood Calendar
+                    </Text>
+                    <Text variant="bodyLarge" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
+                        Track your journey, one day at a time.
+                    </Text>
+                </View>
 
-            <View style={styles.calendarContainer}>
-                <Calendar
-                    theme={{
-                        calendarBackground: theme.colors.elevation.level1,
-                        textSectionTitleColor: theme.colors.onSurface,
-                        selectedDayBackgroundColor: theme.colors.primary,
-                        selectedDayTextColor: theme.colors.onPrimary,
-                        todayTextColor: theme.colors.primary,
-                        dayTextColor: theme.colors.onSurface,
-                        textDisabledColor: theme.colors.onSurfaceDisabled,
-                        monthTextColor: theme.colors.primary,
-                        indicatorColor: theme.colors.primary,
-                        arrowColor: theme.colors.onSurface,
-                    }}
-                    markingType={'custom'}
-                    markedDates={markedDates}
-                    onDayPress={(day: DateData) => {
-                        const today = new Date().toISOString().split('T')[0];
-                        if (day.dateString > today) {
-                            Alert.alert('Future Date', 'You cannot log moods for future dates.');
-                            return;
-                        }
-                        const existingLog = logs.find(log => log.date === day.dateString);
-                        navigation.navigate('LogMood', {
-                            initialLog: existingLog || { date: day.dateString },
-                        });
-                    }}
-                />
-            </View>
+                <Card style={[styles.calendarCard, { backgroundColor: theme.colors.elevation.level1 }]}>
+                    <Card.Content style={{ padding: 4 }}>
+                        <Calendar
+                            theme={{
+                                calendarBackground: 'transparent',
+                                textSectionTitleColor: theme.colors.onSurface,
+                                selectedDayBackgroundColor: theme.colors.primary,
+                                selectedDayTextColor: theme.colors.onPrimary,
+                                todayTextColor: theme.colors.primary,
+                                dayTextColor: theme.colors.onSurface,
+                                textDisabledColor: theme.colors.onSurfaceDisabled,
+                                monthTextColor: theme.colors.primary,
+                                indicatorColor: theme.colors.primary,
+                                arrowColor: theme.colors.onSurface,
+                                textMonthFontWeight: 'bold',
+                                textDayHeaderFontWeight: 'bold',
+                            }}
+                            markingType={'custom'}
+                            markedDates={markedDates}
+                            onDayPress={(day: DateData) => {
+                                const today = new Date().toISOString().split('T')[0];
+                                if (day.dateString > today) {
+                                    Alert.alert('Future Date', 'You cannot log moods for future dates.');
+                                    return;
+                                }
+                                const existingLog = logs.find(log => log.date === day.dateString);
+                                navigation.navigate('LogMood', {
+                                    initialLog: existingLog || { date: day.dateString },
+                                });
+                            }}
+                        />
+                    </Card.Content>
+                </Card>
+
+                <View style={styles.statsContainer}>
+                    {/* Placeholder for quick stats or streak if we had it computed here */}
+                    <Card style={[styles.statCard, { backgroundColor: theme.colors.elevation.level2 }]}>
+                        <Card.Content>
+                            <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Total Logs</Text>
+                            <Text variant="headlineMedium" style={{ fontWeight: 'bold', color: theme.colors.secondary }}>{logs.length}</Text>
+                        </Card.Content>
+                    </Card>
+                </View>
+            </ScrollView>
 
             <FAB
                 icon="plus"
@@ -110,22 +110,35 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    scrollContent: {
+        padding: 16,
+        paddingBottom: 80, // FAB space
+    },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
     header: {
-        padding: 24,
-        paddingBottom: 12,
+        marginBottom: 24,
+        marginTop: 8,
     },
     subtitle: {
-        opacity: 0.7,
+        marginTop: 4,
+        opacity: 0.8,
     },
-    calendarContainer: {
-        margin: 16,
-        borderRadius: 12,
+    calendarCard: {
+        borderRadius: 16,
         overflow: 'hidden',
+        marginBottom: 24,
+    },
+    statsContainer: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    statCard: {
+        flex: 1,
+        borderRadius: 16,
     },
     fab: {
         position: 'absolute',
