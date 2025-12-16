@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, fireEvent, act} from '@testing-library/react-native';
+import {render, fireEvent} from '@testing-library/react-native';
 import {HomeScreen} from '../HomeScreen';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {Alert} from 'react-native';
@@ -14,7 +14,6 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 jest.mock('react-native-calendars', () => {
-  const React = require('react');
   const {View, Button} = require('react-native');
   return {
     Calendar: (props: any) => (
