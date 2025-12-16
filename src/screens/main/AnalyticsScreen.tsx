@@ -1,20 +1,20 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import {View, StyleSheet} from 'react-native';
+import {Text} from 'react-native-paper';
 
 export const AnalyticsScreen = () => {
-    return (
-        <View style={styles.container}>
-            <Text variant="headlineMedium">Analytics</Text>
-            <Text variant="bodyMedium">Charts and Stats will go here</Text>
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <Text variant="headlineMedium">Analytics</Text>
+      <Text variant="bodyMedium">Charts and Stats will go here</Text>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
