@@ -47,7 +47,9 @@ export const useMoodLogs = (month?: string) => {
   });
 
   const createLogMutation = useMutation({
-    mutationFn: async (data: Omit<MoodLogDocument, 'timestamp'>) => {
+    mutationFn: async (
+      data: Omit<MoodLogDocument, 'timestamp' | 'createdAt' | 'updatedAt'>,
+    ) => {
       if (!userId) {
         throw new Error('No user ID');
       }
