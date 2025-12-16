@@ -1,13 +1,13 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { useAuth } from '@clerk/clerk-expo';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { AuthNavigator } from './AuthNavigator';
-import { MainNavigator } from './MainNavigator';
-import { AppNavigationTheme } from '../theme/theme';
+import {NavigationContainer} from '@react-navigation/native';
+import {useAuth} from '@clerk/clerk-expo';
+import {ActivityIndicator, View, StyleSheet} from 'react-native';
+import {AuthNavigator} from './AuthNavigator';
+import {MainNavigator} from './MainNavigator';
+import {AppNavigationTheme} from '../theme/theme';
 
 export const RootNavigator = () => {
-  const { isLoaded, isSignedIn } = useAuth();
+  const {isLoaded, isSignedIn} = useAuth();
 
   if (!isLoaded) {
     return (
