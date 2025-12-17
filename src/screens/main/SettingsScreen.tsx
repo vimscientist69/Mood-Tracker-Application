@@ -67,6 +67,12 @@ export const SettingsScreen = () => {
   };
 
   return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+      }}
+    >
     <Animated.View 
       style={[
         styles.container, 
@@ -198,6 +204,7 @@ export const SettingsScreen = () => {
         </View>
       </View>
     </Animated.View>
+    </SafeAreaView>
   );
 };
 

@@ -5,7 +5,6 @@ import {
   ScrollView,
   Platform,
   KeyboardAvoidingView,
-  Alert,
   useWindowDimensions,
 } from 'react-native';
 import {
@@ -25,6 +24,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useMoodLogs} from '../../hooks/useMoodLogs';
 import {MoodLogDocument} from '../../types/firestore';
 import {ConfettiCelebration} from '../../components/animations/ConfettiCelebration';
+import alert from '@/components/alert';
 
 // Define the schema for the mood log
 const moodLogSchema = z.object({
@@ -128,7 +128,7 @@ export const LogMoodScreen = () => {
   };
 
   const onDelete = () => {
-    Alert.alert(
+    alert(
       'Delete Mood Log',
       'Are you sure you want to delete this mood log?',
       [
