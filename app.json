@@ -5,29 +5,49 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/small-logo.png",
-    "userInterfaceStyle": "dark",
+    "platforms": [
+      "android",
+      "ios",
+      "web"
+    ],
+    "backgroundColor": "#121212",
     "splash": {
       "image": "./assets/small-logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#121212"
+      "backgroundColor": "#121212",
+      "dark": {
+        "backgroundColor": "#121212"
+      }
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vimscientist69.alma_mood_tracker"
+      "bundleIdentifier": "com.vimscientist69.alma-mood-tracker",
+      "icon": {
+        "light": "./assets/small-logo.png"
+      },
+      "splash": {
+        "backgroundColor": "#121212",
+        "image": "./assets/small-logo.png",
+        "tabletImage": "./assets/small-logo.png",
+        "dark": {
+          "backgroundColor": "#121212",
+          "image": "./assets/small-logo.png",
+          "tabletImage": "./assets/small-logo.png"
+        }
+      }
     },
     "android": {
+      "icon": "./assets/small-logo.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/small-logo.png",
-        "backgroundColor": "#121212"
+        "foregroundImage": "./assets/small-logo.png"
       },
       "package": "com.vimscientist69.alma_mood_tracker"
     },
     "web": {
       "favicon": "./assets/logo-without-text.png",
-      "bundler": "metro"
+      "backgroundColor": "#121212"
     },
     "extra": {
       "eas": {

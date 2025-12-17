@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
 import {View, StyleSheet} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Button,
   Text,
@@ -35,7 +36,8 @@ export const SettingsScreen = () => {
   }, [isDark, userProfile?.preferences, updateProfile]);
 
   return (
-    <View
+    <SafeAreaView
+      edges={['top']}
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
       <View style={styles.header}>
         {user?.imageUrl ? (
@@ -80,7 +82,7 @@ export const SettingsScreen = () => {
           Version 2.0.0
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
