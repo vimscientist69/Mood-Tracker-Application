@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {MaterialCommunityIcons} from '@expo/vector-icons'; // Using Expo's vector icons
-import {useTheme} from 'react-native-paper';
+import {useAppTheme} from '../context/ThemeContext';
 import {HomeScreen} from '../screens/main/HomeScreen';
 import {AnalyticsScreen} from '../screens/main/AnalyticsScreen';
 import {SettingsScreen} from '../screens/main/SettingsScreen';
@@ -21,7 +21,7 @@ const SettingsIcon = ({color, size}: {color: string; size: number}) => (
 );
 
 export const MainTabNavigator = () => {
-  const theme = useTheme();
+  const {theme} = useAppTheme();
 
   return (
     <Tab.Navigator

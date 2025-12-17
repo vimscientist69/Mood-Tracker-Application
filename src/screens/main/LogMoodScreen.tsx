@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   Alert,
+  Dimensions,
 } from 'react-native';
 import {
   Button,
@@ -14,15 +15,16 @@ import {
   SegmentedButtons,
   HelperText,
   Chip,
-  useTheme,
   IconButton,
 } from 'react-native-paper';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import {useAppTheme} from '../../context/ThemeContext';
 import {useForm, Controller} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useMoodLogs} from '../../hooks/useMoodLogs';
 import {MoodLogDocument} from '../../types/firestore';
+import {ConfettiCelebration} from '../../components/animations/ConfettiCelebration';
 
 // Define the schema for the mood log
 const moodLogSchema = z.object({
@@ -54,7 +56,8 @@ const AVAILABLE_TAGS = [
 export const LogMoodScreen = () => {
   const navigation = useNavigation();
   const route = useRoute<any>();
-  const theme = useTheme();
+  const {theme} = useAppTheme();
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Check if we are editing an existing log
   const initialLog = route.params?.initialLog as MoodLogDocument | undefined;
@@ -91,20 +94,29 @@ export const LogMoodScreen = () => {
   }, [navigation, isEditing]);
 
   const onSubmit = (data: MoodLogFormValues) => {
+    const handleSuccess = () => {
+      // Show confetti for high mood ratings (4 or 5)
+      if (data.moodRating >= 4) {
+        setShowConfetti(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+          navigation.goBack();
+        }, 5000);
+      } else {
+        navigation.goBack();
+      }
+    };
+
     if (isEditing) {
       updateLog(data, {
-        onSuccess: () => {
-          navigation.goBack();
-        },
+        onSuccess: handleSuccess,
         onError: error => {
           console.error('Failed to update mood', error);
         },
       });
     } else {
       createLog(data, {
-        onSuccess: () => {
-          navigation.goBack();
-        },
+        onSuccess: handleSuccess,
         onError: error => {
           console.error('Failed to log mood', error);
         },
@@ -147,50 +159,66 @@ export const LogMoodScreen = () => {
 
   const isLoading = isCreating || isUpdating || isDeleting;
 
+  const styles = getStyles(theme);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.keyboardAvoidingView}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.container,
-          {backgroundColor: theme.colors.background},
-        ]}>
-        <View style={styles.headerRow}>
-          <Text variant="headlineMedium" style={styles.title}>
-            {isEditing ? 'Update your entry' : 'How are you feeling?'}
-          </Text>
+      style={styles.keyboardAvoidingView}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+      <View style={styles.container}>
+        {showConfetti && <ConfettiCelebration isVisible={true} count={300} />}
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled">
+        <View style={[styles.headerRow, { marginBottom: 24 }]}>
+          <View style={{ flex: 1 }}>
+            <Text variant="headlineMedium" style={[styles.title, { marginBottom: 8 }]}>
+              {isEditing ? 'Update your entry' : 'How are you feeling?'}
+            </Text>
+            <Text style={[styles.dateLabel, { color: theme.colors.onSurfaceVariant }]}>
+              {new Date(initialLog?.date || today).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </Text>
+          </View>
           {isEditing && (
             <IconButton
               icon="delete"
               iconColor={theme.colors.error}
               onPress={onDelete}
               testID="delete-button"
+              style={{ margin: 0, marginLeft: 8 }}
             />
           )}
         </View>
 
-        <Text style={styles.dateLabel}>Date: {initialLog?.date || today}</Text>
 
         <View style={styles.section}>
           <Text variant="titleMedium" style={styles.label}>
             Mood (1-5)
           </Text>
-          <Controller
-            control={control}
-            name="moodRating"
-            render={({field: {value, onChange}}) => (
-              <SegmentedButtons
-                value={String(value)}
-                onValueChange={val => onChange(Number(val))}
-                buttons={[
-                  {value: '1', label: '😢'}, // 1 - Very Sad
-                  {value: '2', label: '😕'}, // 2 - Sad
-                  {value: '3', label: '😐'}, // 3 - Neutral
-                  {value: '4', label: '🙂'}, // 4 - Happy
-                  {value: '5', label: '🤩'}, // 5 - Very Happy
-                ]}
-              />
+            <Controller
+              control={control}
+              name="moodRating"
+              render={({field: {value, onChange}}) => (
+                <View style={styles.moodContainer}>
+                  <SegmentedButtons
+                    value={String(value)}
+                    onValueChange={val => onChange(Number(val))}
+                    buttons={[
+                      {value: '1', label: '😢', style: styles.moodButton}, // 1 - Very Sad
+                      {value: '2', label: '😕', style: styles.moodButton}, // 2 - Sad
+                      {value: '3', label: '😐', style: styles.moodButton}, // 3 - Neutral
+                      {value: '4', label: '🙂', style: styles.moodButton}, // 4 - Happy
+                      {value: '5', label: '🤩', style: styles.moodButton}, // 5 - Very Happy
+                    ]}
+                    style={styles.moodButtons}
+                  />
+                </View>
             )}
           />
           {errors.moodRating && (
@@ -245,39 +273,71 @@ export const LogMoodScreen = () => {
           style={styles.submitButton}>
           {isEditing ? 'Update Mood' : 'Save Mood'}
         </Button>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme: any) => StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 16,
+    paddingBottom: 100, // Extra space for FAB/keyboard
   },
   container: {
-    padding: 24,
-    flexGrow: 1,
+    flex: 1,
+    position: 'relative',
+    backgroundColor: theme.colors.background,
+  },
+  scrollContent: {
+    padding: 16,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    marginTop: 8,
   },
   title: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'left',
+    color: theme.colors.onBackground,
   },
   dateLabel: {
     textAlign: 'center',
-    marginBottom: 24,
-    opacity: 0.6,
+    fontSize: 14,
+    opacity: 0.8,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 32,
+    backgroundColor: theme.colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   label: {
     marginBottom: 12,
+  },
+  moodContainer: {
+    width: '100%',
+    paddingVertical: 8,
+  },
+  moodButtons: {
+    height: 44,
+  },
+  moodButton: {
+    flex: 1,
+    minWidth: 0, // Allow buttons to shrink below their content size
+    paddingHorizontal: 2, // Add some horizontal padding between buttons
   },
   chipContainer: {
     flexDirection: 'row',

@@ -9,16 +9,14 @@ import {
     ActivityIndicator,
     Dimensions,
     Platform,
+    Easing,
 } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import { useQueryClient } from '@tanstack/react-query';
 import Alert from '@blazejkustra/react-native-alert';
 import { deleteAllMoodData, populateRandomMoodData } from '../utils/debugUtils';
-import {
-    BORDER_RADIUS,
-    FONT_SIZES,
-    SPACING,
-} from '../theme/styleConstants';
+import { BORDER_RADIUS, FONT_SIZES, SPACING } from '../theme/styleConstants';
+import { useAppTheme } from '../context/ThemeContext';
 
 interface DebugMenuProps {
     visible: boolean;
@@ -32,6 +30,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
  * Only available in development builds
  */
 export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
+    const { theme } = useAppTheme();
     const { userId } = useAuth();
     const queryClient = useQueryClient();
     const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -40,18 +39,19 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
 
     useEffect(() => {
         if (visible) {
-            // Slide up
-            Animated.spring(slideAnim, {
+            // Slide up with timing animation
+            Animated.timing(slideAnim, {
                 toValue: 0,
+                duration: 250,
+                easing: Easing.out(Easing.ease),
                 useNativeDriver: true,
-                tension: 65,
-                friction: 11,
             }).start();
         } else {
-            // Slide down
+            // Slide down with timing animation
             Animated.timing(slideAnim, {
                 toValue: SCREEN_HEIGHT,
-                duration: 250,
+                duration: 200,
+                easing: Easing.in(Easing.ease),
                 useNativeDriver: true,
             }).start();
         }
@@ -121,183 +121,186 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
         return null;
     }
 
+    const styles = getStyles(theme);
+
     return (
-        <Modal transparent visible={visible} animationType="none">
-            {/* Backdrop */}
-            <Pressable style={styles.backdrop} onPress={onClose}>
-                <View style={styles.backdropOverlay} />
-            </Pressable>
+        <Modal
+            visible={visible}
+            transparent
+            animationType="fade"
+            onRequestClose={onClose}>
+            <Pressable
+                style={styles.backdrop}
+                onPress={onClose}>
+                <Animated.View
+                    style={[
+                        styles.modal,
+                        {
+                            transform: [{ translateY: slideAnim }],
+                        },
+                    ]}
+                    onStartShouldSetResponder={() => true}>
+                    <View style={styles.header}>
+                        <View style={styles.dragHandle} />
+                        <Text style={styles.title}>Debug Menu</Text>
+                        <Text style={styles.subtitle}>Development Tools</Text>
+                    </View>
 
-            {/* Menu Content */}
-            <Animated.View
-                style={[
-                    styles.menuContainer,
-                    {
-                        transform: [{ translateY: slideAnim }],
-                    },
-                ]}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <View style={styles.dragHandle} />
-                    <Text style={styles.title}>🛠️ Debug Menu</Text>
-                    <Pressable style={styles.closeButton} onPress={onClose}>
-                        <Text style={styles.closeButtonText}>✕</Text>
-                    </Pressable>
-                </View>
+                    <View style={styles.content}>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Data Management</Text>
 
-                {/* Buttons */}
-                <View style={styles.content}>
-                    <Text style={styles.subtitle}>Development Tools</Text>
+                            <Pressable
+                                style={({ pressed }) => [
+                                    styles.button,
+                                    isPopulating && { opacity: 0.7 },
+                                    pressed && { opacity: 0.8 }
+                                ]}
+                                onPress={handlePopulateData}
+                                disabled={isPopulating}>
+                                {isPopulating ? (
+                                    <ActivityIndicator color={theme.colors.onPrimary} style={styles.buttonIcon} />
+                                ) : (
+                                    <Text style={styles.buttonIcon}>📊</Text>
+                                )}
+                                <Text style={styles.buttonText}>
+                                    {isPopulating ? 'Generating...' : 'Generate Test Data'}
+                                </Text>
+                            </Pressable>
 
-                    {/* Delete All Data Button */}
-                    <Pressable
-                        style={[
-                            styles.button,
-                            styles.deleteButton,
-                            isDeleting && styles.buttonDisabled,
-                        ]}
-                        onPress={handleDeleteAllData}
-                        disabled={isDeleting || isPopulating}>
-                        {isDeleting ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <>
-                                <Text style={styles.buttonIcon}>🗑️</Text>
-                                <Text style={styles.buttonText}>Delete All Mood Data</Text>
-                            </>
-                        )}
-                    </Pressable>
+                            <Pressable
+                                style={({ pressed }) => [
+                                    styles.button,
+                                    styles.buttonDanger,
+                                    isDeleting && { opacity: 0.7 },
+                                    pressed && { opacity: 0.8 }
+                                ]}
+                                onPress={handleDeleteAllData}
+                                disabled={isDeleting}>
+                                {isDeleting ? (
+                                    <ActivityIndicator color={theme.colors.onError} style={styles.buttonIcon} />
+                                ) : (
+                                    <Text style={styles.buttonIcon}>🗑️</Text>
+                                )}
+                                <Text style={styles.buttonText}>
+                                    {isDeleting ? 'Deleting...' : 'Delete All Data'}
+                                </Text>
+                            </Pressable>
+                        </View>
 
-                    {/* Populate Random Data Button */}
-                    <Pressable
-                        style={[
-                            styles.button,
-                            styles.populateButton,
-                            isPopulating && styles.buttonDisabled,
-                        ]}
-                        onPress={handlePopulateData}
-                        disabled={isDeleting || isPopulating}>
-                        {isPopulating ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <>
-                                <Text style={styles.buttonIcon}>📊</Text>
-                                <Text style={styles.buttonText}>Populate Random Data</Text>
-                            </>
-                        )}
-                    </Pressable>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>App State</Text>
+                            <Pressable
+                                style={({ pressed }) => [
+                                    styles.button,
+                                    { backgroundColor: theme.colors.secondary },
+                                    pressed && { opacity: 0.8 }
+                                ]}
+                                onPress={() => queryClient.invalidateQueries()}
+                            >
+                                <Text style={styles.buttonIcon}>🔄</Text>
+                                <Text style={styles.buttonText}>Force Refresh</Text>
+                            </Pressable>
+                        </View>
+                    </View>
 
                     <Text style={styles.infoText}>
-                        Random data will populate ~75% of days in the past year
+                        User ID: {userId?.substring(0, 8)}...
                     </Text>
-                </View>
-            </Animated.View>
+                </Animated.View>
+            </Pressable>
         </Modal>
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme: any) => StyleSheet.create({
     backdrop: {
         flex: 1,
         justifyContent: 'flex-end',
+        backgroundColor: theme.colors.backdrop || 'rgba(0, 0, 0, 0.5)',
     },
-    backdropOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    menuContainer: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: '#1E1E1E',
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        paddingBottom: 40,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
+    modal: {
+        backgroundColor: theme.colors.surface,
+        borderTopLeftRadius: BORDER_RADIUS.large,
+        borderTopRightRadius: BORDER_RADIUS.large,
+        padding: SPACING.md,
+        paddingTop: SPACING.lg,
+        paddingBottom: Platform.OS === 'ios' ? SPACING.xxl : SPACING.lg,
+        maxHeight: '85%',
+        shadowColor: theme.colors.shadow || '#000',
+        shadowOffset: {
+            width: 0,
+            height: -3,
+        },
+        shadowOpacity: theme.dark ? 0.3 : 0.1,
+        shadowRadius: 10,
         elevation: 10,
     },
     header: {
         alignItems: 'center',
-        paddingTop: 12,
-        paddingBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#333',
+        paddingTop: SPACING.md,
+        paddingBottom: SPACING.lg,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: theme.colors.outline,
     },
     dragHandle: {
         width: 40,
         height: 4,
-        backgroundColor: '#666',
+        backgroundColor: theme.colors.outlineVariant,
         borderRadius: 2,
-        marginBottom: 16,
+        marginBottom: SPACING.md,
+        alignSelf: 'center',
     },
     title: {
-        fontSize: 20,
+        fontSize: FONT_SIZES.xl,
         fontWeight: 'bold',
-        color: '#fff',
-    },
-    closeButton: {
-        position: 'absolute',
-        top: 12,
-        right: 16,
-        width: 32,
-        height: 32,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#333',
-        borderRadius: 16,
-    },
-    closeButtonText: {
-        fontSize: 18,
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    content: {
-        padding: 20,
+        marginBottom: SPACING.xs,
+        color: theme.colors.onSurface,
     },
     subtitle: {
-        fontSize: 14,
-        color: '#999',
-        marginBottom: 16,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
+        fontSize: FONT_SIZES.md,
+        color: theme.colors.onSurfaceVariant,
+        textAlign: 'center',
+    },
+    content: {
+        paddingVertical: SPACING.lg,
+    },
+    section: {
+        marginBottom: SPACING.xl,
+    },
+    sectionTitle: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: '600',
+        marginBottom: SPACING.md,
+        color: theme.colors.onSurface,
     },
     button: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-        marginBottom: 12,
-        minHeight: 56,
+        paddingVertical: SPACING.md,
+        paddingHorizontal: SPACING.lg,
+        borderRadius: BORDER_RADIUS.standard,
+        marginBottom: SPACING.sm,
+        backgroundColor: theme.colors.primary,
     },
-    deleteButton: {
-        backgroundColor: '#DC2626',
-    },
-    populateButton: {
-        backgroundColor: '#2563EB',
-    },
-    buttonDisabled: {
-        opacity: 0.6,
+    buttonDanger: {
+        backgroundColor: theme.colors.error,
     },
     buttonIcon: {
         fontSize: 20,
-        marginRight: 12,
+        marginRight: SPACING.md,
+        color: theme.colors.onPrimary,
     },
     buttonText: {
-        color: '#fff',
-        fontSize: 16,
+        color: theme.colors.onPrimary,
+        fontSize: FONT_SIZES.lg,
         fontWeight: '600',
     },
     infoText: {
-        fontSize: 12,
-        color: '#666',
+        fontSize: FONT_SIZES.sm,
+        color: theme.colors.onSurfaceVariant,
         textAlign: 'center',
-        marginTop: 8,
+        marginTop: SPACING.sm,
         fontStyle: 'italic',
     },
 });
