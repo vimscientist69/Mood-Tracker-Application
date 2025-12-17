@@ -30,10 +30,10 @@ export default function App() {
   }, []);
 
   return (
-    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <ClerkLoaded>
-        <QueryClientProvider client={queryClient}>
-          <SafeAreaProvider>
+    <SafeAreaProvider>
+      <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+        <ClerkLoaded>
+          <QueryClientProvider client={queryClient}>
             <PaperProvider theme={AppPaperTheme}>
               {__DEV__ && (
                 <DebugMenu
@@ -49,9 +49,9 @@ export default function App() {
                 <RootNavigator />
               )}
             </PaperProvider>
-          </SafeAreaProvider>
-        </QueryClientProvider>
-      </ClerkLoaded>
-    </ClerkProvider>
+          </QueryClientProvider>
+        </ClerkLoaded>
+      </ClerkProvider>
+    </SafeAreaProvider>
   );
 }

@@ -54,7 +54,7 @@ export const deleteAllMoodData = async (userId: string): Promise<void> => {
     );
 
     try {
-        console.log('Fetching mood logs to delete...');
+        console.log('Fetching mood log references to delete...');
         // Get all documents
         const snapshot = await getDocs(logsRef);
 

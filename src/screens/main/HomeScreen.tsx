@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import {View, StyleSheet, Alert, ScrollView} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {Text, FAB, useTheme, ActivityIndicator, Card} from 'react-native-paper';
 import {Calendar, DateData} from 'react-native-calendars';
 import {useNavigation} from '@react-navigation/native';
@@ -40,7 +41,8 @@ export const HomeScreen = () => {
   }
 
   return (
-    <View
+    <SafeAreaView
+      edges={['top']}
       style={[styles.container, {backgroundColor: theme.colors.background}]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
@@ -125,7 +127,7 @@ export const HomeScreen = () => {
         onPress={() => navigation.navigate('LogMood')}
         label="Check In"
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

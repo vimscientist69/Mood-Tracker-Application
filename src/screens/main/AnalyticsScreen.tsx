@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Text,
     useTheme,
@@ -128,78 +129,45 @@ export const AnalyticsScreen = () => {
     };
 
     return (
-        <ScrollView
+        <SafeAreaView
+            edges={['top']}
             style={[styles.container, { backgroundColor: theme.colors.background }]}>
-            <View style={styles.headerRow}>
-                <Text variant="headlineMedium" style={styles.headerTitle}>
-                    Analytics
-                </Text>
-                <Menu
-                    visible={menuVisible}
-                    onDismiss={() => setMenuVisible(false)}
-                    anchor={
-                        <Button
-                            mode="outlined"
-                            onPress={() => setMenuVisible(true)}
-                            icon="calendar"
-                            contentStyle={styles.menuButtonContent}>
-                            {RANGE_LABELS[range]}
-                        </Button>
-                    }>
-                    {(Object.keys(RANGE_LABELS) as TimeRange[]).map(key => (
-                        <Menu.Item
-                            key={key}
-                            onPress={() => {
-                                setRange(key);
-                                setMenuVisible(false);
-                            }}
-                            title={RANGE_LABELS[key]}
-                        />
-                    ))}
-                </Menu>
-            </View>
+            <ScrollView contentContainerStyle={styles.scrollView}>
+                <View style={styles.headerRow}>
+                    <Text variant="headlineMedium" style={styles.headerTitle}>
+                        Analytics
+                    </Text>
+                    <Menu
+                        visible={menuVisible}
+                        onDismiss={() => setMenuVisible(false)}
+                        anchor={
+                            <Button
+                                mode="outlined"
+                                onPress={() => setMenuVisible(true)}
+                                icon="calendar"
+                                contentStyle={styles.menuButtonContent}>
+                                {RANGE_LABELS[range]}
+                            </Button>
+                        }>
+                        {(Object.keys(RANGE_LABELS) as TimeRange[]).map(key => (
+                            <Menu.Item
+                                key={key}
+                                title={RANGE_LABELS[key]}
+                                onPress={() => {
+                                    setRange(key);
+                                    setMenuVisible(false);
+                                }}
+                            />
+                        ))}
+                    </Menu>
+                </View>
 
-            <View style={styles.statsRow}>
                 <Card
                     style={[
-                        styles.statCard,
-                        { backgroundColor: theme.colors.elevation.level2 },
+                        styles.chartCard,
+                        { backgroundColor: theme.colors.elevation.level1 },
                     ]}>
-                    <Card.Content style={styles.statContent}>
-                        <Text
-                            variant="labelMedium"
-                            style={{ color: theme.colors.onSurfaceVariant }}>
-                            Entries
-                        </Text>
-                        <Text variant="displaySmall" style={styles.statValue}>
-                            {filteredLogs.length}
-                        </Text>
-                    </Card.Content>
-                </Card>
-                <Card
-                    style={[
-                        styles.statCard,
-                        { backgroundColor: theme.colors.elevation.level2 },
-                    ]}>
-                    <Card.Content style={styles.statContent}>
-                        <Text
-                            variant="labelMedium"
-                            style={{ color: theme.colors.onSurfaceVariant }}>
-                            Avg Mood
-                        </Text>
-                        <Text variant="displaySmall" style={styles.avgMoodValue}>
-                            {averageMood}
-                        </Text>
-                    </Card.Content>
-                </Card>
-            </View>
-
-            <Card
-                style={[
-                    styles.chartCard,
-                    { backgroundColor: theme.colors.elevation.level1 },
-                ]}>
-                <Card.Title title="Mood Distribution" titleStyle={styles.cardTitle} />
+                    <Card.Title title="Mood Distribution" titleStyle={styles.cardTitle} />
                 <Card.Content style={styles.chartContent}>
                     {pieData.length > 0 ? (
                         <View style={styles.pieChartContainer}>
@@ -288,7 +256,8 @@ export const AnalyticsScreen = () => {
             </Card>
 
             <View style={styles.bottomSpacer} />
-        </ScrollView>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
@@ -296,6 +265,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: SPACING.lg,
+    },
+    scrollView: {
+        paddingBottom: SPACING.xxl,
     },
     loadingContainer: {
         flex: 1,
