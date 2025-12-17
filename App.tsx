@@ -9,7 +9,8 @@ import { TripleTapDetector } from './src/components/TripleTapDetector';
 import { DebugMenu } from './src/components/DebugMenu';
 import injectAlertCssVars from './src/web/alertCssVars';
 import { Platform } from 'react-native';
-import { AppPaperTheme } from '@/theme/theme';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { useAppTheme } from '@/context/ThemeContext';
 
 const queryClient = new QueryClient();
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
@@ -29,26 +30,37 @@ export default function App() {
     }
   }, []);
 
+  // Wrap the app with ThemeProvider to provide theme context
+  const AppContent = () => {
+    const { theme, navTheme } = useAppTheme();
+    
+    return (
+      <PaperProvider theme={theme}>
+        {__DEV__ && (
+          <DebugMenu
+            visible={debugMenuVisible}
+            onClose={() => setDebugMenuVisible(false)}
+          />
+        )}
+        {__DEV__ ? (
+          <TripleTapDetector onTripleTap={() => setDebugMenuVisible(true)}>
+            <RootNavigator />
+          </TripleTapDetector>
+        ) : (
+          <RootNavigator />
+        )}
+      </PaperProvider>
+    );
+  };
+
   return (
     <SafeAreaProvider>
       <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
         <ClerkLoaded>
           <QueryClientProvider client={queryClient}>
-            <PaperProvider theme={AppPaperTheme}>
-              {__DEV__ && (
-                <DebugMenu
-                  visible={debugMenuVisible}
-                  onClose={() => setDebugMenuVisible(false)}
-                />
-              )}
-              {__DEV__ ? (
-                <TripleTapDetector onTripleTap={() => setDebugMenuVisible(true)}>
-                  <RootNavigator />
-                </TripleTapDetector>
-              ) : (
-                <RootNavigator />
-              )}
-            </PaperProvider>
+            <ThemeProvider>
+              <AppContent />
+            </ThemeProvider>
           </QueryClientProvider>
         </ClerkLoaded>
       </ClerkProvider>

@@ -123,8 +123,6 @@ expo install react-native-confetti-cannon
 ## Implementation Order
 
 1. **Theme System**
-   - Implement theme context and provider
-   - Add system theme detection
    - Persist theme preferences
    - Add theme transitions
 
