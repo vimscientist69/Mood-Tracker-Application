@@ -4,7 +4,7 @@ import {useAuth} from '@clerk/clerk-expo';
 import {ActivityIndicator, View, StyleSheet} from 'react-native';
 import {AuthNavigator} from './AuthNavigator';
 import {MainNavigator} from './MainNavigator';
-import {AppNavigationTheme} from '../theme/theme';
+import {useAppTheme} from '@/context/ThemeContext';
 
 export const RootNavigator = () => {
   const {isLoaded, isSignedIn} = useAuth();
@@ -17,8 +17,10 @@ export const RootNavigator = () => {
     );
   }
 
+  const {navTheme} = useAppTheme();
+
   return (
-    <NavigationContainer theme={AppNavigationTheme}>
+    <NavigationContainer theme={navTheme}>
       {isSignedIn ? <MainNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
