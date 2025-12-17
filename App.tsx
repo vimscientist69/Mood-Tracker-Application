@@ -7,8 +7,6 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 import { tokenCache } from './src/utils/tokenCache';
 import { TripleTapDetector } from './src/components/TripleTapDetector';
 import { DebugMenu } from './src/components/DebugMenu';
-import injectAlertCssVars from './src/web/alertCssVars';
-import { Platform } from 'react-native';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { useAppTheme } from '@/context/ThemeContext';
 
@@ -24,15 +22,9 @@ if (!publishableKey) {
 export default function App() {
   const [debugMenuVisible, setDebugMenuVisible] = useState(false);
 
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      injectAlertCssVars();
-    }
-  }, []);
-
   // Wrap the app with ThemeProvider to provide theme context
   const AppContent = () => {
-    const { theme, navTheme } = useAppTheme();
+    const { theme } = useAppTheme();
     
     return (
       <PaperProvider theme={theme}>

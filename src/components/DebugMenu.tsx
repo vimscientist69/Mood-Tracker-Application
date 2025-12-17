@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import { useQueryClient } from '@tanstack/react-query';
-import Alert from '@blazejkustra/react-native-alert';
 import { deleteAllMoodData, populateRandomMoodData } from '../utils/debugUtils';
 import { BORDER_RADIUS, FONT_SIZES, SPACING } from '../theme/styleConstants';
 import { useAppTheme } from '../context/ThemeContext';
+import alert from './alert';
 
 interface DebugMenuProps {
     visible: boolean;
@@ -58,7 +58,7 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
     }, [visible, slideAnim]);
 
     const handleDeleteAllData = () => {
-        Alert.alert(
+        alert(
             'Delete All Mood Data',
             'Are you sure you want to delete ALL mood data? This action cannot be undone.',
             [
@@ -71,7 +71,7 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
                     style: 'destructive',
                     onPress: async () => {
                         if (!userId) {
-                            Alert.alert('Error', 'No user ID found');
+                            alert('Error', 'No user ID found');
                             return;
                         }
 
@@ -80,12 +80,12 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
                             await deleteAllMoodData(userId);
                             // Invalidate queries to refresh UI
                             queryClient.invalidateQueries({ queryKey: ['mood_logs'] });
-                            Alert.alert('Success', 'All mood data has been deleted');
+                            alert('Success', 'All mood data has been deleted');
                             onClose();
                         } catch (error) {
                             const errorMessage =
                                 error instanceof Error ? error.message : String(error);
-                            Alert.alert('Error', `Failed to delete mood data: ${errorMessage}`);
+                            alert('Error', `Failed to delete mood data: ${errorMessage}`);
                         } finally {
                             setIsDeleting(false);
                         }
@@ -97,7 +97,7 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
 
     const handlePopulateData = async () => {
         if (!userId) {
-            Alert.alert('Error', 'No user ID found');
+            alert('Error', 'No user ID found');
             return;
         }
 
@@ -106,12 +106,12 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
             const count = await populateRandomMoodData(userId);
             // Invalidate queries to refresh UI
             queryClient.invalidateQueries({ queryKey: ['mood_logs'] });
-            Alert.alert('Success', `Created ${count} random mood entries`);
+            alert('Success', `Created ${count} random mood entries`);
             onClose();
         } catch (error) {
             const errorMessage =
                 error instanceof Error ? error.message : String(error);
-            Alert.alert('Error', `Failed to populate mood data: ${errorMessage}`);
+            alert('Error', `Failed to populate mood data: ${errorMessage}`);
         } finally {
             setIsPopulating(false);
         }
