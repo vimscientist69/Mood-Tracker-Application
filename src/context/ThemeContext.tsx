@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeType, getTheme, getNavigationTheme } from '@/theme/theme';
 import { useUserProfile } from '@/hooks/useUserProfile';
+
+const THEME_STORAGE_KEY = '@app_theme';
 
 type ThemeContextType = {
   theme: ThemeType;
@@ -17,25 +20,51 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { data: userProfile, updateProfile } = useUserProfile();
   const systemColorScheme = useColorScheme();
-  
-  // Default to dark theme if no preference is set
-  const [theme, setThemeState] = useState<ThemeType>(
-    () => (userProfile?.preferences?.theme as ThemeType) || 'dark'
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [theme, setThemeState] = useState<ThemeType>('light'); // Default to light theme
 
-  // Update theme when user preference changes
+  // Load theme from storage on initial render
   useEffect(() => {
-    if (userProfile?.preferences?.theme) {
-      setThemeState(userProfile.preferences.theme as ThemeType);
-    } else if (systemColorScheme) {
-      // Fallback to system theme if no user preference is set
-      setThemeState(systemColorScheme as ThemeType);
-    }
+    const loadTheme = async () => {
+      try {
+        // First try to get theme from user profile
+        if (userProfile?.preferences?.theme) {
+          setThemeState(userProfile.preferences.theme as ThemeType);
+          return;
+        }
+        
+        // Then try to get from AsyncStorage
+        const storedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (storedTheme && (storedTheme === 'light' || storedTheme === 'dark')) {
+          setThemeState(storedTheme);
+          return;
+        }
+
+        // Fallback to system theme
+        if (systemColorScheme) {
+          setThemeState(systemColorScheme as ThemeType);
+        }
+      } catch (error) {
+        console.error('Failed to load theme:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTheme();
   }, [userProfile?.preferences?.theme, systemColorScheme]);
 
   const setTheme = async (newTheme: ThemeType) => {
     setThemeState(newTheme);
-    // Update user profile with the new theme preference
+    
+    // Save to AsyncStorage immediately for fast access
+    try {
+      await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
+    } catch (error) {
+      console.error('Failed to save theme to storage:', error);
+    }
+    
+    // Update user profile in the background
     try {
       await updateProfile({
         preferences: {
@@ -55,17 +84,23 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const paperTheme = getTheme(theme);
   const navTheme = getNavigationTheme(theme);
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    theme,
+    isDark: theme === 'dark',
+    toggleTheme,
+    setTheme,
+    paperTheme: getTheme(theme),
+    navTheme: getNavigationTheme(theme),
+  }), [theme]);
+
+  // Don't render children until theme is loaded to prevent flash
+  if (isLoading) {
+    return null; // Or a loading indicator
+  }
+
   return (
-    <ThemeContext.Provider
-      value={{
-        theme,
-        isDark: theme === 'dark',
-        toggleTheme,
-        setTheme,
-        paperTheme,
-        navTheme,
-      }}
-    >
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );

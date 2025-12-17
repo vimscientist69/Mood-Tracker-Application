@@ -136,6 +136,7 @@ export const useMoodLogs = (month?: string) => {
   return {
     logs: logsQuery.data || [],
     isLoading: logsQuery.isLoading,
+    isRefetching: logsQuery.isRefetching,
     error: logsQuery.error,
     createLog: createLogMutation.mutate,
     isCreating: createLogMutation.isPending,
@@ -143,5 +144,6 @@ export const useMoodLogs = (month?: string) => {
     isUpdating: updateLogMutation.isPending,
     deleteLog: deleteLogMutation.mutate,
     isDeleting: deleteLogMutation.isPending,
+    refetch: logsQuery.refetch,
   };
 };
