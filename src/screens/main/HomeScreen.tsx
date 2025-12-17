@@ -1,21 +1,23 @@
 import React, {useMemo, useState, useCallback, useEffect} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, useWindowDimensions, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Text, FAB, Card} from 'react-native-paper';
+import {Text, FAB, Card } from 'react-native-paper';
 import {Calendar, DateData} from 'react-native-calendars';
 import {useNavigation} from '@react-navigation/native';
 import {useMoodLogs} from '../../hooks/useMoodLogs';
 import {useAppTheme} from '../../context/ThemeContext';
 import {getMoodColor} from '../../utils/moodLogic';
-import {BORDER_RADIUS, SPACING} from '../../theme/styleConstants';
+import {responsive as r, responsiveSpacing as rs, responsiveFontSizes as rf, isTablet} from '../../utils/responsive';
 import {SkeletonLoader} from '../../components/animations/AnimatedComponents';
-import Alert from '@blazejkustra/react-native-alert';
 
 export const HomeScreen = () => {
   const {theme} = useAppTheme();
   const navigation = useNavigation<any>();
   const {logs, isLoading} = useMoodLogs();
   const [currentStreak, setCurrentStreak] = useState(0);
+  const {width} = useWindowDimensions();
+  const isTablet = width >= 600;
+  const isDesktop = width >= 1024;
 
   const markedDates = useMemo(() => {
     const marks: any = {};
@@ -24,7 +26,7 @@ export const HomeScreen = () => {
         customStyles: {
           container: {
             backgroundColor: getMoodColor(log.moodRating),
-            borderRadius: BORDER_RADIUS.medium,
+            borderRadius: r.borderRadius.medium,
           },
           text: {
             color: 'black',
@@ -80,38 +82,61 @@ export const HomeScreen = () => {
   }, [logs, isLoading, calculateCurrentStreak]);
 
   if (isLoading) {
+    const renderSkeletonCards = () => (
+      <View style={[styles.statsContainer, { paddingHorizontal: rs.lg }]}>
+        {[1, 2].map((i) => (
+          <SkeletonLoader
+            key={i}
+            style={[{
+              flex: 1,
+              height: 120,
+              marginHorizontal: rs.sm,
+              borderRadius: r.borderRadius.medium,
+              backgroundColor: theme.colors.surfaceVariant,
+              maxWidth: isTablet ? 300 : '100%',
+              alignSelf: isTablet ? 'flex-start' : 'center',
+            }]}
+          />
+        ))}
+      </View>
+    );
+
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        {/* Header Skeleton */}
-        <View style={[styles.header, { paddingHorizontal: SPACING.lg, paddingTop: SPACING.xl }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={[styles.header, { 
+          paddingHorizontal: isTablet ? rs.xl : rs.lg, 
+          paddingTop: isTablet ? rs.xxl : rs.xl 
+        }]}>
           <SkeletonLoader 
             style={[{
-              width: 280,
-              height: 32,
-              marginBottom: 8,
-              borderRadius: 4,
+              width: isTablet ? 400 : 280,
+              height: isTablet ? 40 : 32,
+              marginBottom: rs.sm,
+              borderRadius: r.borderRadius.small,
               backgroundColor: theme.colors.surfaceVariant,
             }]}
           />
           <SkeletonLoader 
             style={[{
-              width: 220,
-              height: 20,
-              marginTop: 4,
-              borderRadius: 4,
+              width: isTablet ? 300 : 220,
+              height: isTablet ? 24 : 20,
+              borderRadius: r.borderRadius.small,
               backgroundColor: theme.colors.surfaceVariant,
             }]}
           />
         </View>
         
         {/* Calendar Skeleton */}
-        <View style={{ paddingHorizontal: SPACING.lg, marginBottom: SPACING.lg }}>
+        <View style={{ 
+          paddingHorizontal: isTablet ? rs.xl : rs.lg, 
+          marginBottom: isTablet ? rs.xl : rs.lg 
+        }}>
           <SkeletonLoader 
             style={[{
-              width: "100%",
-              height: 350,
-              borderRadius: BORDER_RADIUS.medium,
-              maxWidth: 600,
+              width: '100%',
+              height: isTablet ? 400 : 350,
+              borderRadius: r.borderRadius.medium,
+              maxWidth: 800,
               alignSelf: 'center',
               backgroundColor: theme.colors.surfaceVariant,
             }]}
@@ -119,133 +144,128 @@ export const HomeScreen = () => {
         </View>
 
         {/* Stats Cards Skeleton */}
-        <View style={[styles.statsContainer, { paddingHorizontal: SPACING.lg }]}>
-          <View style={{ flex: 1, width: "100%", alignSelf: 'center' }}>
-            <View style={{ flexDirection: 'row', width: '100%' }}>
-              <View style={{ flex: 1, marginRight: SPACING.sm, minHeight: 120 }}>
-                <SkeletonLoader 
-                  style={[{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: BORDER_RADIUS.medium,
-                    backgroundColor: theme.colors.surfaceVariant,
-                    flex: 1,
-                  }]}
-                />
-              </View>
-              <View style={{ flex: 1, marginLeft: SPACING.sm, minHeight: 120 }}>
-                <SkeletonLoader 
-                  style={[{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: BORDER_RADIUS.medium,
-                    backgroundColor: theme.colors.surfaceVariant,
-                    flex: 1,
-                  }]}
-                />
-              </View>
-            </View>
+        {isTablet ? (
+          <View style={{ flexDirection: 'row', paddingHorizontal: rs.xl }}>
+            {renderSkeletonCards()}
           </View>
-        </View>
+        ) : (
+          <View style={{ paddingHorizontal: rs.lg }}>
+            {renderSkeletonCards()}
+          </View>
+        )}
       </SafeAreaView>
     );
   }
 
-  return (
-    <SafeAreaView
-      edges={['top']}
-      style={[styles.container, {backgroundColor: theme.colors.background}]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text variant="headlineMedium" style={styles.headerTitle}>
-            Your Mood Calendar
-          </Text>
-          <Text
-            variant="bodyLarge"
-            style={[styles.subtitle, {color: theme.colors.onSurfaceVariant}]}>
-            Track your journey, one day at a time.
-          </Text>
-        </View>
+  const renderContent = () => (
+    <View style={[styles.content, isDesktop && styles.desktopContent]}>
+      <View style={[styles.calendarContainer, isTablet && styles.tabletCalendarContainer]}>
+        <Calendar
+          key={`calendar-${theme.isDark ? "dark" : "light"}`}
+          style={[styles.calendar, isTablet && styles.tabletCalendar]}
+          theme={{
+            backgroundColor: theme.colors.surface,
+            calendarBackground: theme.colors.surface,
+            textSectionTitleColor: theme.colors.onSurfaceVariant,
+            selectedDayBackgroundColor: theme.colors.primary,
+            selectedDayTextColor: theme.colors.onPrimary,
+            todayTextColor: theme.colors.primary,
+            dayTextColor: theme.colors.onSurface,
+            textDisabledColor: theme.colors.surfaceVariant,
+            dotColor: theme.colors.primary,
+            selectedDotColor: theme.colors.onPrimary,
+            arrowColor: theme.colors.primary,
+            monthTextColor: theme.colors.primary,
+            textDayFontWeight: '500',
+            textMonthFontWeight: 'bold',
+            textDayHeaderFontWeight: '500',
+            textDayFontSize: isTablet ? 18 : 16,
+            textMonthFontSize: isTablet ? 24 : 20,
+            textDayHeaderFontSize: isTablet ? 16 : 14,
+          }}
+          markingType={'custom'}
+          markedDates={markedDates}
+          onDayPress={(day) => {
+            const today = new Date().toISOString().split('T')[0];
+            if (day.dateString > today) {
+              Alert.alert(
+                'Future Date',
+                'You cannot log moods for future dates.',
+              );
+              return;
+            }
+            const existingLog = logs.find(
+              log => log.date === day.dateString,
+            );
+            navigation.navigate('LogMood', {
+              initialLog: existingLog || {date: day.dateString},
+            });
+          }}
+        />
+      </View>
 
-        <Card
-          style={[
-            styles.calendarCard,
-            {backgroundColor: theme.colors.elevation.level1},
-          ]}>
-          <Card.Content style={styles.calendarContent}>
-            <Calendar
-              key={`calendar-${theme.dark ? 'dark' : 'light'}`}
-              theme={{
-                backgroundColor: theme.colors.surface,
-                calendarBackground: 'transparent',
-                textSectionTitleColor: theme.colors.onSurface,
-                selectedDayBackgroundColor: theme.colors.primary,
-                selectedDayTextColor: theme.colors.onPrimary,
-                todayTextColor: theme.colors.primary,
-                dayTextColor: theme.colors.onSurface,
-                textDisabledColor: theme.colors.onSurfaceDisabled,
-                monthTextColor: theme.colors.primary,
-                indicatorColor: theme.colors.primary,
-                arrowColor: theme.colors.onSurface,
-                textMonthFontWeight: 'bold',
-                textDayHeaderFontWeight: 'bold',
-              }}
-              markingType={'custom'}
-              markedDates={markedDates}
-              onDayPress={(day: DateData) => {
-                const today = new Date().toISOString().split('T')[0];
-                if (day.dateString > today) {
-                  Alert.alert(
-                    'Future Date',
-                    'You cannot log moods for future dates.',
-                  );
-                  return;
-                }
-                const existingLog = logs.find(
-                  log => log.date === day.dateString,
-                );
-                navigation.navigate('LogMood', {
-                  initialLog: existingLog || {date: day.dateString},
-                });
-              }}
-            />
+      <View style={[styles.statsContainer, isTablet && styles.tabletStatsContainer]}>
+        <Card style={[styles.statCard, {backgroundColor: theme.colors.elevation.level2}]}>
+          <Card.Content style={styles.statCardContent}>
+            <Text variant="labelMedium" style={{color: theme.colors.onSurfaceVariant}}>
+              Total Logs
+            </Text>
+            <Text variant={isTablet ? 'displaySmall' : 'headlineMedium'} style={styles.statValue}>
+              {logs.length}
+            </Text>
           </Card.Content>
         </Card>
+        
+        <Card style={[styles.statCard, {backgroundColor: theme.colors.elevation.level2}]}>
+          <Card.Content style={styles.statCardContent}>
+            <Text variant="labelMedium" style={{color: theme.colors.onSurfaceVariant}}>
+              Current Streak
+            </Text>
+            <Text variant={isTablet ? 'displaySmall' : 'headlineMedium'} style={styles.statValue}>
+              {currentStreak} day{currentStreak !== 1 ? 's' : ''}
+            </Text>
+          </Card.Content>
+        </Card>
+      </View>
+    </View>
+  );
 
-        <View style={[styles.statsContainer, { paddingHorizontal: SPACING.lg }]}>
-          <View style={{ flexDirection: 'row', gap: SPACING.md, width: '100%' }}>
-            {/* Total Logs Card */}
-            <Card style={[styles.statCard, { backgroundColor: theme.colors.elevation.level2 }]}>
-              <Card.Content>
-                <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                  Total Logs
-                </Text>
-                <Text variant="headlineMedium" style={styles.statValue}>
-                  {logs.length}
-                </Text>
-              </Card.Content>
-            </Card>
-            
-            {/* Streak Card */}
-            <Card style={[styles.statCard, { backgroundColor: theme.colors.elevation.level2 }]}>
-              <Card.Content>
-                <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                  Current Streak
-                </Text>
-                <Text variant="headlineMedium" style={styles.statValue}>
-                  {currentStreak} day{currentStreak !== 1 ? 's' : ''}
-                </Text>
-              </Card.Content>
-            </Card>
+  return (
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      {isDesktop ? (
+        <View style={styles.desktopContainer}>
+          <View style={styles.desktopSidebar}>
+            <Text variant="headlineSmall" style={[styles.title, {color: theme.colors.onBackground}]}>
+              Mood Tracker
+            </Text>
+            <Text variant="bodyMedium" style={[styles.subtitle, {color: theme.colors.onSurfaceVariant}]}>
+              Track your daily mood and patterns
+            </Text>
           </View>
+          <ScrollView contentContainerStyle={styles.desktopScrollView}>
+            {renderContent()}
+          </ScrollView>
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.header}>
+            <Text variant="headlineMedium" style={[styles.title, {color: theme.colors.onBackground}]}>
+              Mood Tracker
+            </Text>
+            <Text variant="bodyMedium" style={[styles.subtitle, {color: theme.colors.onSurfaceVariant}]}>
+              Track your daily mood and patterns
+            </Text>
+          </View>
+          {renderContent()}
+        </ScrollView>
+      )}
 
       <FAB
         icon="plus"
         style={[styles.fab, {backgroundColor: theme.colors.primary}]}
         color={theme.colors.onPrimary}
         onPress={() => navigation.navigate('LogMood')}
+        size={isTablet ? 'large' : 'medium'}
         label="Check In"
       />
     </SafeAreaView>
@@ -257,55 +277,101 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  scrollContent: {
-    padding: SPACING.lg,
-    paddingBottom: 80, // FAB space
-  },
-  loadingContainer: {
+  desktopContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
   },
-  header: {
-    marginBottom: SPACING.xl,
-    marginTop: SPACING.sm,
+  desktopSidebar: {
+    width: 300,
+    padding: rs.xl,
+    borderRightWidth: 1,
+    borderRightColor: 'rgba(0,0,0,0.1)',
   },
-  subtitle: {
-    marginTop: SPACING.xs,
-    opacity: 0.8,
+  desktopScrollView: {
+    flexGrow: 1,
+    padding: rs.xl,
   },
-  calendarCard: {
-    borderRadius: BORDER_RADIUS.card,
-    marginBottom: SPACING.xl,
+  desktopContent: {
+    maxWidth: 1200,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  scrollView: {
+    flexGrow: 1,
+    paddingBottom: 100,
+  },
+  content: {
+    flex: 1,
+  },
+  calendarContainer: {
+    margin: rs.md,
+    borderRadius: r.borderRadius.large,
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  tabletCalendarContainer: {
+    marginHorizontal: rs.xl,
+    marginTop: rs.lg,
+  },
+  calendar: {
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderRadius: r.borderRadius.large,
+    overflow: 'hidden',
+  },
+  tabletCalendar: {
+    padding: rs.md,
   },
   statsContainer: {
-    marginVertical: SPACING.lg,
-    width: '100%',
-    maxWidth: 600,
-    alignSelf: 'center',
-    paddingHorizontal: SPACING.lg,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: isTablet ? 'flex-start' : 'space-between',
+    marginBottom: rs.xl,
+    gap: rs.md,
+  },
+  tabletStatsContainer: {
+    paddingHorizontal: rs.xl,
+    marginTop: rs.lg,
   },
   statCard: {
     flex: 1,
-    borderRadius: BORDER_RADIUS.card,
-    minHeight: 120,
-    justifyContent: 'center',
+    marginHorizontal: rs.sm,
+    borderRadius: r.borderRadius.medium,
+  },
+  statCardContent: {
+    padding: rs.md,
+  },
+  statValue: {
+    fontWeight: 'bold',
+    marginTop: rs.xs,
   },
   fab: {
     position: 'absolute',
-    margin: SPACING.lg,
+    margin: rs.xl,
     right: 0,
     bottom: 0,
+  },
+  header: {
+    padding: rs.lg,
+    paddingBottom: rs.md,
+  },
+  title: {
+    fontWeight: 'bold',
+    marginBottom: rs.xs,
+  },
+  subtitle: {
+    opacity: 0.8,
   },
   headerTitle: {
     fontWeight: 'bold',
     color: '#bb86fc', // theme.colors.primary
   },
   calendarContent: {
-    padding: SPACING.xs,
-  },
-  statValue: {
-    fontWeight: 'bold',
-    color: '#ce93d8', // theme.colors.secondary
+    padding: rs.xs,
   },
 });
