@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Animated, Easing} from 'react-native';
+import {View, StyleSheet, Animated, Easing, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Button,
@@ -9,10 +9,11 @@ import {
   Avatar,
   Divider,
   useTheme,
+  Surface,
 } from 'react-native-paper';
 import {useClerk, useUser} from '@clerk/clerk-expo';
 import {useUserProfile} from '@/hooks/useUserProfile';
-import {SPACING} from '@/theme/styleConstants';
+import {responsive as r, responsiveSpacing as rs, responsiveFontSizes, isTablet, isDesktop} from '@/utils/responsive';
 import {useToggleTheme, useAppTheme} from '@/context/ThemeContext';
 
 const ListIconTheme = (props: any) => (
@@ -28,6 +29,12 @@ export const SettingsScreen = () => {
   const {isDark} = useAppTheme();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const {width} = useWindowDimensions();
+  
+  // Responsive values
+  const avatarSize = isTablet ? 120 : 80;
+  const containerMaxWidth = 800;
+  const contentPadding = isTablet ? rs.xxl : rs.lg;
 
   React.useEffect(() => {
     // Fade in animation
@@ -69,54 +76,126 @@ export const SettingsScreen = () => {
         }
       ]}
     >
-      <View style={styles.header}>
-        {user?.imageUrl ? (
-          <Avatar.Image size={80} source={{uri: user.imageUrl}} />
-        ) : (
-          <Avatar.Text
-            size={80}
-            label={userProfile?.displayName?.charAt(0) || 'U'}
-          />
-        )}
-        <Text variant="headlineSmall" style={styles.name}>
-          {userProfile?.displayName || 'User'}
-        </Text>
-        <Text variant="bodyMedium" style={styles.email}>
-          {userProfile?.email}
-        </Text>
-      </View>
-
-      <List.Section>
-        <List.Subheader>Preferences</List.Subheader>
-        <List.Item
-          title="Dark Mode"
-          left={ListIconTheme}
-          // eslint-disable-next-line react/no-unstable-nested-components
-          right={props => (
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <Switch 
-                {...props} 
-                value={isDark} 
-                onValueChange={handleThemeToggle} 
+      <View style={[
+        styles.contentContainer, 
+        isDesktop && { maxWidth: containerMaxWidth, alignSelf: 'center', width: '100%' }
+      ]}>
+        <Surface 
+          style={[
+            styles.headerContainer,
+            { 
+              backgroundColor: theme.colors.surface,
+              elevation: 2,
+              borderRadius: r.borderRadius.large,
+              margin: isTablet ? rs.xl : rs.lg,
+              padding: isTablet ? rs.xxl : rs.xl,
+            }
+          ]}
+        >
+          <View style={styles.header}>
+            {user?.imageUrl ? (
+              <Avatar.Image size={avatarSize} source={{uri: user.imageUrl}} />
+            ) : (
+              <Avatar.Text
+                size={avatarSize}
+                label={userProfile?.displayName?.charAt(0) || 'U'}
+                style={{ backgroundColor: theme.colors.primary }}
+                color={theme.colors.onPrimary}
+                labelStyle={{ fontSize: avatarSize * 0.4 }}
               />
-            </Animated.View>
-          )}
-        />
-      </List.Section>
+            )}
+            <View style={styles.headerTextContainer}>
+              <Text 
+                variant={isTablet ? 'headlineMedium' : 'headlineSmall'} 
+                style={[styles.name, { marginTop: isTablet ? rs.lg : rs.md }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {userProfile?.displayName || 'User'}
+              </Text>
+              <Text 
+                variant="bodyMedium" 
+                style={[styles.email, { marginTop: rs.xs }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {userProfile?.email}
+              </Text>
+            </View>
+          </View>
+        </Surface>
 
-      <Divider />
+        <View style={[styles.settingsContainer, { paddingHorizontal: isTablet ? rs.xxl : rs.lg }]}>
+          <List.Section style={styles.section}>
+            <List.Subheader style={[styles.sectionHeader, { fontSize: responsiveFontSizes.md }]}>
+              Preferences
+            </List.Subheader>
+            <Surface 
+              style={[
+                styles.settingItem,
+                { 
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: r.borderRadius.medium,
+                  elevation: 1,
+                }
+              ]}
+            >
+              <List.Item
+                title="Dark Mode"
+                titleStyle={{ fontSize: responsiveFontSizes.md }}
+                left={props => <ListIconTheme {...props} color={theme.colors.primary} />}
+                right={props => (
+                  <Animated.View style={{ transform: [{ scale: scaleAnim }], justifyContent: 'center' }}>
+                    <Switch 
+                      {...props} 
+                      value={isDark} 
+                      onValueChange={handleThemeToggle}
+                    />
+                  </Animated.View>
+                )}
+                style={styles.listItem}
+              />
+            </Surface>
+          </List.Section>
 
-      <View style={styles.footer}>
-        <Button
-          mode="outlined"
-          onPress={() => signOut()}
-          textColor={theme.colors.error}
-          style={styles.logoutButton}>
-          Sign Out
-        </Button>
-        <Text variant="bodySmall" style={styles.version}>
-          Version 2.0.0
-        </Text>
+          <Divider style={[styles.divider, { marginVertical: rs.xl }]} />
+
+          <View style={styles.footer}>
+            <Button
+              mode="outlined"
+              onPress={() => signOut()}
+              textColor={theme.colors.error}
+              style={[
+                styles.logoutButton,
+                { 
+                  width: isTablet ? '60%' : '100%',
+                  maxWidth: 400,
+                  alignSelf: 'center',
+                }
+              ]}
+              contentStyle={{
+                height: isTablet ? 48 : 44,
+              }}
+              labelStyle={{
+                fontSize: responsiveFontSizes.md,
+              }}
+            >
+              Sign Out
+            </Button>
+            <Text 
+              variant="bodySmall" 
+              style={[
+                styles.version, 
+                { 
+                  marginTop: isTablet ? rs.xl : rs.lg,
+                  fontSize: responsiveFontSizes.sm,
+                }
+              ]}
+            >
+              Version 2.0.0
+            </Text>
+          </View>
+        </View>
       </View>
     </Animated.View>
   );
@@ -125,30 +204,67 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    backgroundColor: 'transparent',
+  },
+  contentContainer: {
+    flex: 1,
+    width: '100%',
+  },
+  headerContainer: {
+    marginTop: isTablet ? rs.xxl : rs.xl,
+    overflow: 'hidden',
   },
   header: {
     alignItems: 'center',
-    paddingVertical: SPACING.xxxl,
+    justifyContent: 'center',
+  },
+  headerTextContainer: {
+    alignItems: 'center',
+    marginTop: rs.lg,
+    maxWidth: '100%',
+    paddingHorizontal: rs.md,
   },
   name: {
-    marginTop: SPACING.lg,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    textAlign: 'center',
   },
   email: {
-    opacity: 0.6,
+    opacity: 0.7,
+    textAlign: 'center',
+    maxWidth: '100%',
+  },
+  settingsContainer: {
+    flex: 1,
+    paddingBottom: rs.xl,
+  },
+  section: {
+    marginTop: rs.xl,
+  },
+  sectionHeader: {
+    paddingLeft: rs.sm,
+    marginBottom: rs.sm,
+    fontWeight: '600',
+  },
+  settingItem: {
+    borderRadius: r.borderRadius.medium,
+    overflow: 'hidden',
+  },
+  listItem: {
+    paddingHorizontal: rs.md,
+  },
+  divider: {
+    marginHorizontal: rs.lg,
   },
   footer: {
-    padding: SPACING.lg,
     marginTop: 'auto',
     alignItems: 'center',
+    paddingTop: rs.xl,
   },
   logoutButton: {
-    width: '100%',
-    borderColor: '#ff000050',
+    borderColor: 'rgba(255, 0, 0, 0.2)',
+    borderRadius: r.borderRadius.medium,
   },
   version: {
-    marginTop: SPACING.lg,
-    opacity: 0.4,
+    opacity: 0.5,
   },
 });
