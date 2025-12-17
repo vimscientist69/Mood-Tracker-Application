@@ -3,7 +3,6 @@ import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     Text,
-    useTheme,
     ActivityIndicator,
     Card,
     Chip,
@@ -12,6 +11,7 @@ import {
 } from 'react-native-paper';
 import { PieChart, LineChart } from 'react-native-gifted-charts';
 import { useMoodLogs } from '../../hooks/useMoodLogs';
+import { useAppTheme } from '../../context/ThemeContext';
 import { format, parseISO } from 'date-fns';
 import { MOOD_COLORS_MAP } from '../../utils/moodLogic';
 import {
@@ -40,7 +40,7 @@ const RANGE_LABELS: Record<TimeRange, string> = {
 };
 
 export const AnalyticsScreen = () => {
-    const theme = useTheme();
+    const { theme } = useAppTheme();
     const { logs, isLoading } = useMoodLogs();
     const [range, setRange] = useState<TimeRange>('7d');
     const [menuVisible, setMenuVisible] = useState(false);

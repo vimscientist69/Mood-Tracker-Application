@@ -1,18 +1,21 @@
-import React, {useMemo, useState, useCallback} from 'react';
-import {View, StyleSheet, Alert, ScrollView} from 'react-native';
+import React, {useMemo, useState, useCallback, useEffect} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Text, FAB, useTheme, ActivityIndicator, Card} from 'react-native-paper';
+import {Text, FAB, Card} from 'react-native-paper';
 import {Calendar, DateData} from 'react-native-calendars';
 import {useNavigation} from '@react-navigation/native';
 import {useMoodLogs} from '../../hooks/useMoodLogs';
+import {useAppTheme} from '../../context/ThemeContext';
 import {getMoodColor} from '../../utils/moodLogic';
 import {BORDER_RADIUS, SPACING} from '../../theme/styleConstants';
-import { SkeletonLoader } from '../../components/animations/AnimatedComponents';
+import {SkeletonLoader} from '../../components/animations/AnimatedComponents';
+import Alert from '@blazejkustra/react-native-alert';
 
 export const HomeScreen = () => {
-  const theme = useTheme();
+  const {theme} = useAppTheme();
   const navigation = useNavigation<any>();
   const {logs, isLoading} = useMoodLogs();
+  const [currentStreak, setCurrentStreak] = useState(0);
 
   const markedDates = useMemo(() => {
     const marks: any = {};
@@ -33,7 +36,6 @@ export const HomeScreen = () => {
     return marks;
   }, [logs]);
 
-  // Calculate current streak
   const calculateCurrentStreak = useCallback(() => {
     if (!logs || logs.length === 0) return 0;
     
@@ -69,6 +71,13 @@ export const HomeScreen = () => {
     
     return streak;
   }, [logs]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const streak = calculateCurrentStreak();
+      setCurrentStreak(streak);
+    }
+  }, [logs, isLoading, calculateCurrentStreak]);
 
   if (isLoading) {
     return (
@@ -165,7 +174,9 @@ export const HomeScreen = () => {
           ]}>
           <Card.Content style={styles.calendarContent}>
             <Calendar
+              key={`calendar-${theme.dark ? 'dark' : 'light'}`}
               theme={{
+                backgroundColor: theme.colors.surface,
                 calendarBackground: 'transparent',
                 textSectionTitleColor: theme.colors.onSurface,
                 selectedDayBackgroundColor: theme.colors.primary,
@@ -222,7 +233,7 @@ export const HomeScreen = () => {
                   Current Streak
                 </Text>
                 <Text variant="headlineMedium" style={styles.statValue}>
-                  {calculateCurrentStreak()} day{calculateCurrentStreak() !== 1 ? 's' : ''}
+                  {currentStreak} day{currentStreak !== 1 ? 's' : ''}
                 </Text>
               </Card.Content>
             </Card>
@@ -244,6 +255,7 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
   scrollContent: {
     padding: SPACING.lg,
@@ -264,7 +276,6 @@ const styles = StyleSheet.create({
   },
   calendarCard: {
     borderRadius: BORDER_RADIUS.card,
-    overflow: 'hidden',
     marginBottom: SPACING.xl,
   },
   statsContainer: {
