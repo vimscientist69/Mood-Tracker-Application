@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ThemeType, getTheme, getNavigationTheme } from '@/theme/theme';
+import { ThemeType, getTheme, getNavigationTheme, AppTheme, NavTheme } from '@/theme/theme';
 import { useUserProfile } from '@/hooks/useUserProfile';
 
 const THEME_STORAGE_KEY = '@app_theme';
 
-type ThemeContextType = {
+export type ThemeContextType = {
   theme: ThemeType;
   isDark: boolean;
   toggleTheme: () => void;
   setTheme: (theme: ThemeType) => void;
-  paperTheme: ReturnType<typeof getTheme>;
-  navTheme: ReturnType<typeof getNavigationTheme>;
+  paperTheme: AppTheme;
+  navTheme: NavTheme;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -66,7 +66,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     // Update user profile in the background
     try {
-      await updateProfile({
+      updateProfile({
         preferences: {
           ...userProfile?.preferences,
           theme: newTheme,
@@ -80,9 +80,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
-
-  const paperTheme = getTheme(theme);
-  const navTheme = getNavigationTheme(theme);
 
   // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(() => ({

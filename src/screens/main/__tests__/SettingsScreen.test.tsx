@@ -1,7 +1,7 @@
 import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
+import {fireEvent} from '@testing-library/react-native';
 import {SettingsScreen} from '../SettingsScreen';
-import {Provider as PaperProvider} from 'react-native-paper';
+import {renderWithTheme} from '../../../test-utils/theme-test-utils';
 
 // Mock dependencies
 const mockSignOut = jest.fn();
@@ -18,31 +18,19 @@ jest.mock('../../../hooks/useUserProfile', () => ({
       email: 'test@example.com',
       preferences: {theme: 'light'},
     },
-    updateProfile: mockUpdateProfile,
   }),
 }));
 
 describe('SettingsScreen', () => {
   it('renders correctly', () => {
-    const {getByText} = render(
-      <PaperProvider>
-        <SettingsScreen />
-      </PaperProvider>,
-    );
-
+    const {getByText} = renderWithTheme(<SettingsScreen />);
     expect(getByText('Preferences')).toBeTruthy();
-    // Header says userName.
     expect(getByText('Test User')).toBeTruthy();
     expect(getByText('Sign Out')).toBeTruthy();
   });
 
   it('handles sign out', () => {
-    const {getByText} = render(
-      <PaperProvider>
-        <SettingsScreen />
-      </PaperProvider>,
-    );
-
+    const {getByText} = renderWithTheme(<SettingsScreen />);
     fireEvent.press(getByText('Sign Out'));
     expect(mockSignOut).toHaveBeenCalled();
   });

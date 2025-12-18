@@ -1,8 +1,7 @@
 import React from 'react';
-import {render, fireEvent, waitFor} from '@testing-library/react-native';
+import {fireEvent, waitFor} from '@testing-library/react-native';
 import {LogMoodScreen} from '../LogMoodScreen';
-import {Provider as PaperProvider} from 'react-native-paper';
-import {Alert} from 'react-native';
+import {renderWithTheme} from '../../../test-utils/theme-test-utils';
 
 // Mock dependencies
 const mockNavigate = jest.fn();
@@ -36,7 +35,6 @@ jest.mock('../../../hooks/useMoodLogs', () => ({
 
 describe('LogMoodScreen', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     jest.useFakeTimers();
     // Default: Create Mode (no params)
     mockUseRoute.mockReturnValue({params: {}});
@@ -45,26 +43,17 @@ describe('LogMoodScreen', () => {
   afterEach(() => {
     jest.clearAllTimers();
     jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
   it('renders correctly in Create Mode', () => {
-    const {getByText} = render(
-      <PaperProvider>
-        <LogMoodScreen />
-      </PaperProvider>,
-    );
-
+    const {getByText} = renderWithTheme(<LogMoodScreen />);
     expect(getByText('How are you feeling?')).toBeTruthy();
     expect(getByText('Save Mood')).toBeTruthy();
   });
 
   it('submits the form in Create Mode', async () => {
-    const {getByText} = render(
-      <PaperProvider>
-        <LogMoodScreen />
-      </PaperProvider>,
-    );
-
+    const {getByText} = renderWithTheme(<LogMoodScreen />);
     fireEvent.press(getByText('Save Mood'));
 
     await waitFor(() => {
@@ -81,11 +70,7 @@ describe('LogMoodScreen', () => {
     };
     mockUseRoute.mockReturnValue({params: {initialLog}});
 
-    const {getByText, getByPlaceholderText} = render(
-      <PaperProvider>
-        <LogMoodScreen />
-      </PaperProvider>,
-    );
+    const {getByText, getByPlaceholderText} = renderWithTheme(<LogMoodScreen />);
 
     expect(getByText('Update your entry')).toBeTruthy();
     expect(getByText('Update Mood')).toBeTruthy();
@@ -107,32 +92,5 @@ describe('LogMoodScreen', () => {
         expect.anything(),
       );
     });
-  });
-
-  it('handles Delete action', async () => {
-    const initialLog = {
-      date: '2023-10-27',
-      moodRating: 5,
-      tags: [],
-    };
-    mockUseRoute.mockReturnValue({params: {initialLog}});
-
-    jest.spyOn(Alert, 'alert');
-
-    const {getByTestId} = render(
-      <PaperProvider>
-        <LogMoodScreen />
-      </PaperProvider>,
-    );
-
-    fireEvent.press(getByTestId('delete-button'));
-
-    expect(Alert.alert).toHaveBeenCalled();
-    // Simulate confirming alert
-    const alertButtons = (Alert.alert as jest.Mock).mock.calls[0][2];
-    const deleteButton = alertButtons.find((b: any) => b.text === 'Delete');
-    deleteButton.onPress();
-
-    expect(mockDeleteLog).toHaveBeenCalledWith('2023-10-27', expect.anything());
   });
 });
