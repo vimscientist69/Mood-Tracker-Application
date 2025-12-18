@@ -1,4 +1,5 @@
-// import '@testing-library/react-native/extend-expect';
+import { mockNavigationTheme, mockTheme } from '@/test-utils/theme-mock';
+import mockSafeAreaContext from 'react-native-safe-area-context/jest/mock';
 
 // Mock Clerk
 jest.mock('@clerk/clerk-expo', () => ({
@@ -50,8 +51,7 @@ jest.mock('react-native-reanimated', () => {
 });
 
 // Mock Safe Area
-import mockSafeAreaContext from 'react-native-safe-area-context/jest/mock';
-jest.mock('react-native-safe-area-context', () => mockSafeAreaContext);
+// jest.mock('react-native-safe-area-context', () => mockSafeAreaContext);
 
 // Suppress specific library warnings
 const originalConsoleError = console.error;
@@ -62,3 +62,12 @@ console.error = (...args) => {
   }
   originalConsoleError(...args);
 };
+
+jest.mock('./src/context/ThemeContext', () => ({
+  useAppTheme: jest.fn().mockImplementation(() => ({
+    theme: mockTheme,
+    navTheme: mockNavigationTheme,
+    isDark: false,
+  })),
+  useToggleTheme: jest.fn()
+}));

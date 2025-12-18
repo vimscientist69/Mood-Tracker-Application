@@ -1,8 +1,8 @@
 import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
+import {fireEvent} from '@testing-library/react-native';
 import {HomeScreen} from '../HomeScreen';
-import {Provider as PaperProvider} from 'react-native-paper';
-import {Alert} from 'react-native';
+import {renderWithTheme} from '../../../test-utils/theme-test-utils';
+import alert from '@/components/alert';
 
 // Mock dependencies
 jest.mock('@clerk/clerk-expo', () => ({
@@ -41,6 +41,14 @@ jest.mock('../../../hooks/useMoodLogs', () => ({
   }),
 }));
 
+// Mock the alert module
+jest.mock('@/components/alert', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation((title, message) => {
+    console.log(`Alert: ${title} - ${message}`);
+  }),
+}));
+
 describe('HomeScreen', () => {
   beforeEach(() => {
     const useNavigation = require('@react-navigation/native').useNavigation;
@@ -51,16 +59,12 @@ describe('HomeScreen', () => {
   afterEach(() => {
     jest.clearAllTimers();
     jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    const {getByText} = render(
-      <PaperProvider>
-        <HomeScreen />
-      </PaperProvider>,
-    );
-
-    expect(getByText('Your Mood Calendar')).toBeTruthy();
+    const {getByText} = renderWithTheme(<HomeScreen />);
+    expect(getByText('Mood Tracker')).toBeTruthy();
   });
 
   it('navigates to LogMood on FAB press', () => {
@@ -68,14 +72,9 @@ describe('HomeScreen', () => {
     const useNavigation = require('@react-navigation/native').useNavigation;
     useNavigation.mockReturnValue({navigate});
 
-    const {getByText} = render(
-      <PaperProvider>
-        <HomeScreen />
-      </PaperProvider>,
-    );
-
+    const {getByText} = renderWithTheme(<HomeScreen />);
     fireEvent.press(getByText('Check In'));
-    jest.runAllTimers(); // Advance timers to allow any pending updates (e.g., from Icon animations) to complete
+    jest.runAllTimers();
 
     expect(navigate).toHaveBeenCalledWith('LogMood');
   });
@@ -89,29 +88,22 @@ describe('HomeScreen', () => {
     const mockDate = new Date('2023-01-01T12:00:00Z');
     jest.useFakeTimers().setSystemTime(mockDate);
 
-    // Spy on Alert
-    jest.spyOn(Alert, 'alert');
-
-    const {getByText} = render(
-      <PaperProvider>
-        <HomeScreen />
-      </PaperProvider>,
-    );
+    const {getByText} = renderWithTheme(<HomeScreen />);
 
     // Press Future Date (2025-12-25 > 2023-01-01)
     fireEvent.press(getByText('Press Future Date'));
-    expect(Alert.alert).toHaveBeenCalledWith('Future Date', expect.any(String));
+    expect(alert).toHaveBeenCalledWith('Future Date', 'You cannot log moods for future dates.');
     expect(navigate).not.toHaveBeenCalled();
 
     // Clear mocks
-    (Alert.alert as jest.Mock).mockClear();
+    (alert as any).mockClear();
     navigate.mockClear();
 
     // Press Past Date (2023-01-01 <= 2023-01-01) - In our mock button it is exactly 2023-01-01, wait logic says > today.
     // Logic: if day.dateString > today.
     // Today is 2023-01-01. 2023-01-01 is NOT > 2023-01-01. So it should navigate.
     fireEvent.press(getByText('Press Past Date'));
-    expect(Alert.alert).not.toHaveBeenCalled();
+    expect(alert).not.toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith('LogMood', expect.anything());
   });
 });

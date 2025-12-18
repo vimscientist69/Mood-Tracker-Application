@@ -5,11 +5,11 @@ import { Text, FAB, Card } from 'react-native-paper';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useMoodLogs } from '../../hooks/useMoodLogs';
-import { useAppTheme } from '../../context/ThemeContext';
 import { getMoodColor } from '../../utils/moodLogic';
 import { responsive as r, responsiveSpacing as rs, responsiveFontSizes as rf, isTablet } from '../../utils/responsive';
 import { SkeletonLoader } from '../../components/animations/AnimatedComponents';
 import alert from '@/components/alert';
+import { useAppTheme } from '@/context/ThemeContext';
 
 export const HomeScreen = () => {
   const { theme } = useAppTheme();
@@ -277,7 +277,7 @@ export const HomeScreen = () => {
     <View style={[styles.content, isDesktop && styles.desktopContent]}>
       <View style={[styles.calendarContainer, isTablet && styles.tabletCalendarContainer]}>
         <Calendar
-          key={`calendar-${theme.isDark ? "dark" : "light"}`}
+          key={`calendar-${theme.dark ? "dark" : "light"}`}
           style={[styles.calendar, isTablet && styles.tabletCalendar]}
           theme={{
             backgroundColor: theme.colors.surface,

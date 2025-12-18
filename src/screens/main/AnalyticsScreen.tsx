@@ -8,7 +8,6 @@ import {
     Chip,
     Menu,
     Button,
-    useTheme,
 } from 'react-native-paper';
 import { PieChart, LineChart } from 'react-native-gifted-charts';
 import { useMoodLogs } from '../../hooks/useMoodLogs';
@@ -41,7 +40,6 @@ const RANGE_LABELS: Record<TimeRange, string> = {
 
 export const AnalyticsScreen = () => {
     const { theme } = useAppTheme();
-    const { colors } = useTheme();
     const { logs, isLoading } = useMoodLogs();
     const [range, setRange] = useState<TimeRange>('7d');
     const [menuVisible, setMenuVisible] = useState(false);
@@ -54,7 +52,7 @@ export const AnalyticsScreen = () => {
         return filterLogsByDate(logs, range);
     }, [logs, range]);
 
-    // Mood data with emojis and colors
+    // Mood data with emojis and theme.colors
     type MoodKey = 1 | 2 | 3 | 4 | 5;
     interface MoodData {
         [key: number]: {
@@ -155,22 +153,22 @@ export const AnalyticsScreen = () => {
         <View style={styles.content}>
             {/* Stats Overview */}
             <View style={[styles.statsContainer, isTablet && styles.tabletStatsContainer]}>
-                <Card style={[styles.statCard, { backgroundColor: colors.elevation.level2 }]}>
+                <Card style={[styles.statCard, { backgroundColor: theme.colors.elevation.level2 }]}>
                     <Card.Content style={styles.statCardContent}>
-                        <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>
+                        <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>
                             Total Entries
                         </Text>
-                        <Text variant={isTablet ? "displaySmall" : "headlineMedium"} style={[styles.statValue, { color: colors.primary }]}>
+                        <Text variant={isTablet ? "displaySmall" : "headlineMedium"} style={[styles.statValue, { color: theme.colors.primary }]}>
                             {filteredLogs.length}
                         </Text>
                     </Card.Content>
                 </Card>
-                <Card style={[styles.statCard, { backgroundColor: colors.elevation.level2 }]}>
+                <Card style={[styles.statCard, { backgroundColor: theme.colors.elevation.level2 }]}>
                     <Card.Content style={styles.statCardContent}>
-                        <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>
+                        <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>
                             Avg. Mood
                         </Text>
-                        <Text variant={isTablet ? "displaySmall" : "headlineMedium"} style={[styles.statValue, { color: colors.primary }]}>
+                        <Text variant={isTablet ? "displaySmall" : "headlineMedium"} style={[styles.statValue, { color: theme.colors.primary }]}>
                             {averageMood.toFixed(1)}
                         </Text>
                     </Card.Content>
@@ -178,9 +176,9 @@ export const AnalyticsScreen = () => {
             </View>
 
             {/* Mood Distribution */}
-            <Card style={[styles.chartCard, { backgroundColor: colors.elevation.level2 }]}>
+            <Card style={[styles.chartCard, { backgroundColor: theme.colors.elevation.level2 }]}>
                 <Card.Content>
-                    <Text variant="titleMedium" style={{ marginBottom: rs.md, color: colors.onSurface }}>
+                    <Text variant="titleMedium" style={{ marginBottom: rs.md, color: theme.colors.onSurface }}>
                         Mood Distribution
                     </Text>
                     <View style={styles.chartContainer}>
@@ -193,13 +191,13 @@ export const AnalyticsScreen = () => {
                                     sectionAutoFocus
                                     radius={isTablet ? 100 : 80}
                                     innerRadius={isTablet ? 60 : 45}
-                                    innerCircleColor={colors.surface}
+                                    innerCircleColor={theme.colors.surface}
                                     centerLabelComponent={() => (
                                         <View style={styles.pieCenterLabel}>
-                                            <Text variant={isTablet ? "headlineSmall" : "titleMedium"} style={{ color: colors.primary }}>
+                                            <Text variant={isTablet ? "headlineSmall" : "titleMedium"} style={{ color: theme.colors.primary }}>
                                                 {filteredLogs.length}
                                             </Text>
-                                            <Text variant={isTablet ? "bodyMedium" : "bodySmall"} style={{ color: colors.onSurfaceVariant }}>
+                                            <Text variant={isTablet ? "bodyMedium" : "bodySmall"} style={{ color: theme.colors.onSurfaceVariant }}>
                                                 total
                                             </Text>
                                         </View>
@@ -209,10 +207,10 @@ export const AnalyticsScreen = () => {
                                     {pieData.map((item) => (
                                         <View key={item.moodKey} style={styles.legendItem}>
                                             <View style={[styles.legendColor, { backgroundColor: item.color }]} />
-                                            <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant, marginLeft: rs.xs }}>
+                                            <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant, marginLeft: rs.xs }}>
                                                 {moodData[item.moodKey].emoji} {moodData[item.moodKey].label}
                                             </Text>
-                                            <Text variant="labelSmall" style={{ color: colors.onSurfaceVariant, marginLeft: rs.xs, opacity: 0.7 }}>
+                                            <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant, marginLeft: rs.xs, opacity: 0.7 }}>
                                                 ({Math.round((item.value / filteredLogs.length) * 100)}%)
                                             </Text>
                                         </View>
@@ -221,7 +219,7 @@ export const AnalyticsScreen = () => {
                             </View>
                         ) : (
                             <View style={styles.noDataContainer}>
-                                <Text style={{ color: colors.onSurfaceVariant }}>No data available</Text>
+                                <Text style={{ color: theme.colors.onSurfaceVariant }}>No data available</Text>
                             </View>
                         )}
                     </View>
@@ -229,9 +227,9 @@ export const AnalyticsScreen = () => {
             </Card>
 
             {/* Mood Trend */}
-            <Card style={[styles.chartCard, { backgroundColor: colors.elevation.level2 }]}>
+            <Card style={[styles.chartCard, { backgroundColor: theme.colors.elevation.level2 }]}>
                 <Card.Content>
-                    <Text variant="titleMedium" style={{ marginBottom: rs.md, color: colors.onSurface }}>
+                    <Text variant="titleMedium" style={{ marginBottom: rs.md, color: theme.colors.onSurface }}>
                         Mood Trend
                     </Text>
                     <View style={styles.chartContainer}>
@@ -242,17 +240,17 @@ export const AnalyticsScreen = () => {
                                 height={220}
                                 initialSpacing={0}
                                 spacing={Math.max(20, Math.min(40, (width - 40) / lineData.length))}
-                                color1={colors.primary}
-                                textColor1={colors.onSurface}
-                                dataPointsColor1={colors.primary}
+                                color1={theme.colors.primary}
+                                textColor1={theme.colors.onSurface}
+                                dataPointsColor1={theme.colors.primary}
                                 textShiftY={-2}
                                 textShiftX={1}
                                 textFontSize={10}
                                 hideRules
-                                yAxisColor={colors.surfaceVariant}
-                                xAxisColor={colors.surfaceVariant}
-                                yAxisTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
-                                xAxisLabelTextStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
+                                yAxisColor={theme.colors.surfaceVariant}
+                                xAxisColor={theme.colors.surfaceVariant}
+                                yAxisTextStyle={{ color: theme.colors.onSurfaceVariant, fontSize: 10 }}
+                                xAxisLabelTextStyle={{ color: theme.colors.onSurfaceVariant, fontSize: 10 }}
                                 yAxisLabelPrefix=""
                                 yAxisLabelSuffix=""
                                 yAxisLabelWidth={30}
@@ -264,7 +262,7 @@ export const AnalyticsScreen = () => {
                             />
                         ) : (
                             <View style={styles.noDataContainer}>
-                                <Text style={{ color: colors.onSurfaceVariant }}>Not enough data to show trend</Text>
+                                <Text style={{ color: theme.colors.onSurfaceVariant }}>Not enough data to show trend</Text>
                             </View>
                         )}
                     </View>
@@ -273,9 +271,9 @@ export const AnalyticsScreen = () => {
 
             {/* Top Tags */}
             {topTags.length > 0 && (
-                <Card style={[styles.chartCard, { backgroundColor: colors.elevation.level2 }]}>
+                <Card style={[styles.chartCard, { backgroundColor: theme.colors.elevation.level2 }]}>
                     <Card.Content>
-                        <Text variant="titleMedium" style={{ marginBottom: rs.md, color: colors.onSurface }}>
+                        <Text variant="titleMedium" style={{ marginBottom: rs.md, color: theme.colors.onSurface }}>
                             Top Mood Tags
                         </Text>
                         <View style={styles.tagsContainer}>
@@ -285,9 +283,9 @@ export const AnalyticsScreen = () => {
                                     mode="outlined"
                                     style={[
                                         styles.tagChip,
-                                        { borderColor: colors.primary, backgroundColor: `${colors.primary}10` }
+                                        { borderColor: theme.colors.primary, backgroundColor: `${theme.colors.primary}10` }
                                     ]}
-                                    textStyle={{ color: colors.primary }}
+                                    textStyle={{ color: theme.colors.primary }}
                                 >
                                     {tag.tag} ({tag.count})
                                 </Chip>
@@ -301,21 +299,21 @@ export const AnalyticsScreen = () => {
 
     if (isLoading) {
         return (
-            <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-                <ActivityIndicator size="large" color={colors.primary} />
+            <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
+                <ActivityIndicator size="large" color={theme.colors.primary} />
             </View>
         );
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
             {isDesktop ? (
                 <View style={styles.desktopContainer}>
                     <View style={styles.desktopSidebar}>
-                        <Text variant="headlineSmall" style={[styles.title, { color: colors.onBackground }]}>
+                        <Text variant="headlineSmall" style={[styles.title, { color: theme.colors.onBackground }]}>
                             Analytics
                         </Text>
-                        <Text variant="bodyMedium" style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
+                        <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
                             Track your mood patterns and insights
                         </Text>
                         
@@ -345,7 +343,7 @@ export const AnalyticsScreen = () => {
                                         }}
                                         title={label}
                                         titleStyle={{
-                                            color: key === range ? colors.primary : colors.onSurface,
+                                            color: key === range ? theme.colors.primary : theme.colors.onSurface,
                                         }}
                                     />
                                 ))}
@@ -359,10 +357,10 @@ export const AnalyticsScreen = () => {
             ) : (
                 <ScrollView contentContainerStyle={styles.scrollView}>
                     <View style={styles.header}>
-                        <Text variant="headlineMedium" style={[styles.title, { color: colors.onBackground }]}>
+                        <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
                             Analytics
                         </Text>
-                        <Text variant="bodyMedium" style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
+                        <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
                             Track your mood patterns and insights
                         </Text>
                     </View>
@@ -393,7 +391,7 @@ export const AnalyticsScreen = () => {
                                     }}
                                     title={label}
                                     titleStyle={{
-                                        color: key === range ? colors.primary : colors.onSurface,
+                                        color: key === range ? theme.colors.primary : theme.colors.onSurface,
                                     }}
                                 />
                             ))}
@@ -484,11 +482,11 @@ const styles = StyleSheet.create({
         marginHorizontal: rs.lg,
         marginBottom: rs.lg,
         borderRadius: r.borderRadius.medium,
-        overflow: 'hidden',
     },
     chartContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         minHeight: 200,
         padding: rs.md,
     },

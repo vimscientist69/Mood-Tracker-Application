@@ -8,7 +8,6 @@ import {
   Switch,
   Avatar,
   Divider,
-  useTheme,
   Surface,
 } from 'react-native-paper';
 import {useClerk, useUser} from '@clerk/clerk-expo';
@@ -23,7 +22,7 @@ const ListIconTheme = (props: any) => (
 export const SettingsScreen = () => {
   const {signOut} = useClerk();
   const {user} = useUser();
-  const theme = useTheme();
+  const { theme } = useAppTheme();
   const {data: userProfile} = useUserProfile();
   const toggleTheme = useToggleTheme();
   const {isDark} = useAppTheme();
@@ -146,21 +145,23 @@ export const SettingsScreen = () => {
                 }
               ]}
             >
-              <List.Item
-                title="Dark Mode"
-                titleStyle={{ fontSize: responsiveFontSizes.md }}
-                left={props => <ListIconTheme {...props} color={theme.colors.primary} />}
-                right={props => (
-                  <Animated.View style={{ transform: [{ scale: scaleAnim }], justifyContent: 'center' }}>
-                    <Switch 
-                      {...props} 
-                      value={isDark} 
-                      onValueChange={handleThemeToggle}
-                    />
-                  </Animated.View>
-                )}
-                style={styles.listItem}
-              />
+              <View style={{overflow: 'hidden'}}>
+                <List.Item
+                  title="Dark Mode"
+                  titleStyle={{ fontSize: responsiveFontSizes.md }}
+                  left={props => <ListIconTheme {...props} color={theme.colors.primary} />}
+                  right={props => (
+                    <Animated.View style={{ transform: [{ scale: scaleAnim }], justifyContent: 'center' }}>
+                      <Switch 
+                        {...props} 
+                        value={isDark} 
+                        onValueChange={handleThemeToggle}
+                      />
+                    </Animated.View>
+                  )}
+                  style={styles.listItem}
+                />
+              </View>
             </Surface>
           </List.Section>
 
@@ -219,11 +220,11 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginTop: isTablet ? rs.xxl : rs.xl,
-    overflow: 'hidden',
   },
   header: {
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   headerTextContainer: {
     alignItems: 'center',
@@ -254,7 +255,6 @@ const styles = StyleSheet.create({
   },
   settingItem: {
     borderRadius: r.borderRadius.medium,
-    overflow: 'hidden',
   },
   listItem: {
     paddingHorizontal: rs.md,

@@ -134,6 +134,10 @@ export type AppTheme = typeof PaperTheme.light & {
   isDark: boolean;
 };
 
+export type NavTheme = typeof NavigationTheme.light & {
+  dark: boolean;
+};
+
 export type ThemeType = 'light' | 'dark';
 
 export const getTheme = (themeType: ThemeType): AppTheme => ({
@@ -141,6 +145,8 @@ export const getTheme = (themeType: ThemeType): AppTheme => ({
   isDark: themeType === 'dark',
 });
 
-export const getNavigationTheme = (themeType: ThemeType) => ({
+export const getNavigationTheme = (themeType: ThemeType): NavTheme => ({
   ...NavigationTheme[themeType],
 });
+
+const result = getNavigationTheme('light');
