@@ -5,19 +5,19 @@ import React, {
   useState,
   useMemo,
   useCallback,
-} from 'react';
-import {useColorScheme} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react";
+import { useColorScheme } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   ThemeType,
   getTheme,
   getNavigationTheme,
   AppTheme,
   NavTheme,
-} from '@/theme/theme';
-import {useUserProfile} from '@/hooks/useUserProfile';
+} from "@/theme/theme";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
-const THEME_STORAGE_KEY = '@app_theme';
+const THEME_STORAGE_KEY = "@app_theme";
 
 export type ThemeContextType = {
   theme: ThemeType;
@@ -30,13 +30,13 @@ export type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const {data: userProfile, updateProfile} = useUserProfile();
+  const { data: userProfile, updateProfile } = useUserProfile();
   const systemColorScheme = useColorScheme();
   const [isLoading, setIsLoading] = useState(true);
-  const [theme, setThemeState] = useState<ThemeType>('light'); // Default to light theme
+  const [theme, setThemeState] = useState<ThemeType>("light"); // Default to light theme
 
   // Load theme from storage on initial render
   useEffect(() => {
@@ -52,7 +52,7 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
         const storedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
         if (
           storedTheme &&
-          (storedTheme === 'light' || storedTheme === 'dark')
+          (storedTheme === "light" || storedTheme === "dark")
         ) {
           setThemeState(storedTheme);
           return;
@@ -63,7 +63,7 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
           setThemeState(systemColorScheme as ThemeType);
         }
       } catch (error) {
-        console.error('Failed to load theme:', error);
+        console.error("Failed to load theme:", error);
       } finally {
         setIsLoading(false);
       }
@@ -80,7 +80,7 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
       try {
         await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
       } catch (error) {
-        console.error('Failed to save theme to storage:', error);
+        console.error("Failed to save theme to storage:", error);
       }
 
       // Update user profile in the background
@@ -92,21 +92,21 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
           },
         });
       } catch (error) {
-        console.error('Failed to update theme preference:', error);
+        console.error("Failed to update theme preference:", error);
       }
     },
     [userProfile?.preferences, updateProfile],
   );
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTheme(theme === "dark" ? "light" : "dark");
   }, [theme, setTheme]);
 
   // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(
     () => ({
       theme,
-      isDark: theme === 'dark',
+      isDark: theme === "dark",
       toggleTheme,
       setTheme,
       paperTheme: getTheme(theme),
@@ -130,19 +130,19 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({
 export const useThemeContext = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useThemeContext must be used within a ThemeProvider');
+    throw new Error("useThemeContext must be used within a ThemeProvider");
   }
   return context;
 };
 
 // This is a convenience hook that can be used in any component to get the current theme
 export const useAppTheme = () => {
-  const {paperTheme, navTheme, isDark} = useThemeContext();
-  return {theme: paperTheme, navTheme, isDark};
+  const { paperTheme, navTheme, isDark } = useThemeContext();
+  return { theme: paperTheme, navTheme, isDark };
 };
 
 // This is a convenience hook to get the toggle function
 export const useToggleTheme = () => {
-  const {toggleTheme} = useThemeContext();
+  const { toggleTheme } = useThemeContext();
   return toggleTheme;
 };

@@ -1,5 +1,5 @@
-import React, {useRef, ReactNode} from 'react';
-import {Pressable, StyleSheet} from 'react-native';
+import React, { useRef, ReactNode } from "react";
+import { Pressable, StyleSheet } from "react-native";
 
 interface TripleTapDetectorProps {
   children: ReactNode;
@@ -26,7 +26,7 @@ export const TripleTapDetector: React.FC<TripleTapDetectorProps> = ({
 
     // Filter out taps older than TAP_TIMEOUT
     tapTimestamps.current = tapTimestamps.current.filter(
-      timestamp => now - timestamp < TAP_TIMEOUT,
+      (timestamp) => now - timestamp < TAP_TIMEOUT,
     );
 
     // Check if we have 3 taps within the time window

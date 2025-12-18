@@ -1,8 +1,8 @@
-import React from 'react';
-import {StyleSheet, Animated, ViewStyle, StyleProp} from 'react-native';
+import React from "react";
+import { StyleSheet, Animated, ViewStyle, StyleProp } from "react-native";
 
 // Skeleton Loader Component
-export const SkeletonLoader: React.FC<{style?: StyleProp<ViewStyle>}> = ({
+export const SkeletonLoader: React.FC<{ style?: StyleProp<ViewStyle> }> = ({
   style,
 }) => {
   const pulseAnim = React.useRef(new Animated.Value(0.5)).current;
@@ -27,7 +27,7 @@ export const SkeletonLoader: React.FC<{style?: StyleProp<ViewStyle>}> = ({
   }, [pulseAnim]);
 
   return (
-    <Animated.View style={[styles.skeleton, {opacity: pulseAnim}, style]} />
+    <Animated.View style={[styles.skeleton, { opacity: pulseAnim }, style]} />
   );
 };
 
@@ -35,7 +35,7 @@ export const SkeletonLoader: React.FC<{style?: StyleProp<ViewStyle>}> = ({
 export const FadeInView: React.FC<{
   children: React.ReactNode;
   duration?: number;
-}> = ({children, duration = 300}) => {
+}> = ({ children, duration = 300 }) => {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -46,23 +46,25 @@ export const FadeInView: React.FC<{
     }).start();
   }, [fadeAnim, duration]);
 
-  return <Animated.View style={{opacity: fadeAnim}}>{children}</Animated.View>;
+  return (
+    <Animated.View style={{ opacity: fadeAnim }}>{children}</Animated.View>
+  );
 };
 
 // Scale Button Component
 export const ScaleButton: React.FC<{
-  children: React.ReactElement<{onPress?: () => void}>;
+  children: React.ReactElement<{ onPress?: () => void }>;
   onPress: () => void;
   scaleTo?: number;
   style?: StyleProp<ViewStyle>;
-}> = ({children, onPress, scaleTo = 0.95, style}) => {
+}> = ({ children, onPress, scaleTo = 0.95, style }) => {
   const scaleValue = React.useRef(new Animated.Value(1)).current;
 
   const animatePress = () => {
     Animated.spring(scaleValue, {
       toValue: scaleTo,
       useNativeDriver: true,
-    }).start(({finished}) => {
+    }).start(({ finished }) => {
       if (finished) {
         Animated.spring(scaleValue, {
           toValue: 1,
@@ -76,7 +78,7 @@ export const ScaleButton: React.FC<{
   };
 
   return (
-    <Animated.View style={[{transform: [{scale: scaleValue}]}, style]}>
+    <Animated.View style={[{ transform: [{ scale: scaleValue }] }, style]}>
       {React.cloneElement(children, {
         onPress: animatePress,
       })}
@@ -86,7 +88,7 @@ export const ScaleButton: React.FC<{
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: '#E1E1E1',
+    backgroundColor: "#E1E1E1",
     borderRadius: 4,
   },
 });

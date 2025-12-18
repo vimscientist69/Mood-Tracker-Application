@@ -1,7 +1,7 @@
-import {mockNavigationTheme, mockTheme} from '@/test-utils/theme-mock';
+import { mockNavigationTheme, mockTheme } from "@/test-utils/theme-mock";
 
 // Mock Clerk
-jest.mock('@clerk/clerk-expo', () => ({
+jest.mock("@clerk/clerk-expo", () => ({
   useSignIn: jest.fn(() => ({
     signIn: {
       create: jest.fn(),
@@ -22,13 +22,13 @@ jest.mock('@clerk/clerk-expo', () => ({
     isSignedIn: false,
     isLoaded: true,
   })),
-  ClerkProvider: ({children}: any) => children,
-  ClerkLoaded: ({children}: any) => children,
+  ClerkProvider: ({ children }: any) => children,
+  ClerkLoaded: ({ children }: any) => children,
 }));
 
 // Mock Navigation
-jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
+jest.mock("@react-navigation/native", () => {
+  const actualNav = jest.requireActual("@react-navigation/native");
   return {
     ...actualNav,
     useNavigation: () => ({
@@ -43,8 +43,8 @@ jest.mock('@react-navigation/native', () => {
 });
 
 // Mock Reanimated
-jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
+jest.mock("react-native-reanimated", () => {
+  const Reanimated = require("react-native-reanimated/mock");
   Reanimated.default.call = () => {};
   return Reanimated;
 });
@@ -55,14 +55,14 @@ jest.mock('react-native-reanimated', () => {
 // Suppress specific library warnings
 const originalConsoleError = console.error;
 console.error = (...args) => {
-  const msg = args.join(' ');
-  if (msg.includes('An update to') && msg.includes('not wrapped in act')) {
+  const msg = args.join(" ");
+  if (msg.includes("An update to") && msg.includes("not wrapped in act")) {
     return;
   }
   originalConsoleError(...args);
 };
 
-jest.mock('./src/context/ThemeContext', () => ({
+jest.mock("./src/context/ThemeContext", () => ({
   useAppTheme: jest.fn().mockImplementation(() => ({
     theme: mockTheme,
     navTheme: mockNavigationTheme,

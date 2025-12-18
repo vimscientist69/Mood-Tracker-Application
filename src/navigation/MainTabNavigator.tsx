@@ -1,27 +1,27 @@
-import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {MaterialCommunityIcons} from '@expo/vector-icons'; // Using Expo's vector icons
-import {useAppTheme} from '../context/ThemeContext';
-import {HomeScreen} from '../screens/main/HomeScreen';
-import {AnalyticsScreen} from '../screens/main/AnalyticsScreen';
-import {SettingsScreen} from '../screens/main/SettingsScreen';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // Using Expo's vector icons
+import { useAppTheme } from "../context/ThemeContext";
+import { HomeScreen } from "../screens/main/HomeScreen";
+import { AnalyticsScreen } from "../screens/main/AnalyticsScreen";
+import { SettingsScreen } from "../screens/main/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
-const HomeIcon = ({color, size}: {color: string; size: number}) => (
+const HomeIcon = ({ color, size }: { color: string; size: number }) => (
   <MaterialCommunityIcons name="home" color={color} size={size} />
 );
 
-const AnalyticsIcon = ({color, size}: {color: string; size: number}) => (
+const AnalyticsIcon = ({ color, size }: { color: string; size: number }) => (
   <MaterialCommunityIcons name="chart-bar" color={color} size={size} />
 );
 
-const SettingsIcon = ({color, size}: {color: string; size: number}) => (
+const SettingsIcon = ({ color, size }: { color: string; size: number }) => (
   <MaterialCommunityIcons name="cog" color={color} size={size} />
 );
 
 export const MainTabNavigator = () => {
-  const {theme} = useAppTheme();
+  const { theme } = useAppTheme();
 
   return (
     <Tab.Navigator
@@ -33,13 +33,14 @@ export const MainTabNavigator = () => {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-      }}>
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           tabBarIcon: HomeIcon,
-          tabBarLabel: 'Home',
+          tabBarLabel: "Home",
         }}
       />
       <Tab.Screen
@@ -47,7 +48,7 @@ export const MainTabNavigator = () => {
         component={AnalyticsScreen}
         options={{
           tabBarIcon: AnalyticsIcon,
-          tabBarLabel: 'Analytics',
+          tabBarLabel: "Analytics",
         }}
       />
       <Tab.Screen
@@ -55,7 +56,7 @@ export const MainTabNavigator = () => {
         component={SettingsScreen}
         options={{
           tabBarIcon: SettingsIcon,
-          tabBarLabel: 'Settings',
+          tabBarLabel: "Settings",
         }}
       />
     </Tab.Navigator>

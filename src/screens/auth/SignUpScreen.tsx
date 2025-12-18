@@ -1,55 +1,55 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, KeyboardAvoidingView, Platform} from 'react-native';
-import {Text, TextInput, Button, HelperText} from 'react-native-paper';
-import {useSignUp} from '@clerk/clerk-expo';
-import {useNavigation} from '@react-navigation/native';
-import {useForm, Controller} from 'react-hook-form';
-import {z} from 'zod';
-import {zodResolver} from '@hookform/resolvers/zod';
+import React, { useState } from "react";
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { Text, TextInput, Button, HelperText } from "react-native-paper";
+import { useSignUp } from "@clerk/clerk-expo";
+import { useNavigation } from "@react-navigation/native";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const signUpSchema = z
   .object({
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 const verificationSchema = z.object({
-  code: z.string().min(6, 'Code must be 6 characters'),
+  code: z.string().min(6, "Code must be 6 characters"),
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 type VerificationFormData = z.infer<typeof verificationSchema>;
 
 export const SignUpScreen = () => {
-  const {isLoaded, signUp, setActive} = useSignUp();
+  const { isLoaded, signUp, setActive } = useSignUp();
   const navigation = useNavigation<any>();
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // Form for Sign Up
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: {email: '', password: '', confirmPassword: ''},
+    defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
   // Form for Verification
   const {
     control: verifyControl,
     handleSubmit: handleVerifySubmit,
-    formState: {errors: verifyErrors},
+    formState: { errors: verifyErrors },
   } = useForm<VerificationFormData>({
     resolver: zodResolver(verificationSchema),
-    defaultValues: {code: ''},
+    defaultValues: { code: "" },
   });
 
   const onSignUpPress = async (data: SignUpFormData) => {
@@ -57,7 +57,7 @@ export const SignUpScreen = () => {
       return;
     }
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       await signUp.create({
@@ -65,11 +65,11 @@ export const SignUpScreen = () => {
         password: data.password,
       });
 
-      await signUp.prepareEmailAddressVerification({strategy: 'email_code'});
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      setError(err.errors?.[0]?.message || 'Failed to sign up');
+      setError(err.errors?.[0]?.message || "Failed to sign up");
     } finally {
       setLoading(false);
     }
@@ -80,17 +80,17 @@ export const SignUpScreen = () => {
       return;
     }
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code: data.code,
       });
 
-      await setActive({session: completeSignUp.createdSessionId});
+      await setActive({ session: completeSignUp.createdSessionId });
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      setError(err.errors?.[0]?.message || 'Verification failed');
+      setError(err.errors?.[0]?.message || "Verification failed");
     } finally {
       setLoading(false);
     }
@@ -103,8 +103,9 @@ export const SignUpScreen = () => {
   if (pendingVerification) {
     return (
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.container}
+      >
         <View style={styles.formContainer}>
           <Text variant="headlineMedium" style={styles.title}>
             Verify Email
@@ -122,7 +123,7 @@ export const SignUpScreen = () => {
           <Controller
             control={verifyControl}
             name="code"
-            render={({field: {onChange, onBlur, value}}) => (
+            render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 label="Verification Code"
                 mode="outlined"
@@ -143,7 +144,8 @@ export const SignUpScreen = () => {
             onPress={handleVerifySubmit(onPressVerify)}
             loading={loading}
             disabled={loading}
-            style={styles.button}>
+            style={styles.button}
+          >
             Verify & Sign In
           </Button>
         </View>
@@ -153,8 +155,9 @@ export const SignUpScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}>
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <View style={styles.formContainer}>
         <Text variant="headlineLarge" style={styles.title}>
           Create Account
@@ -169,7 +172,7 @@ export const SignUpScreen = () => {
         <Controller
           control={control}
           name="email"
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               testID="email-input"
               label="Email"
@@ -190,7 +193,7 @@ export const SignUpScreen = () => {
         <Controller
           control={control}
           name="password"
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               testID="password-input"
               label="Password"
@@ -210,7 +213,7 @@ export const SignUpScreen = () => {
         <Controller
           control={control}
           name="confirmPassword"
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               testID="confirm-password-input"
               label="Confirm Password"
@@ -233,14 +236,16 @@ export const SignUpScreen = () => {
           onPress={handleSubmit(onSignUpPress)}
           loading={loading}
           disabled={loading}
-          style={styles.button}>
+          style={styles.button}
+        >
           Sign Up
         </Button>
 
         <Button
           mode="text"
-          onPress={() => navigation.navigate('SignIn')}
-          disabled={loading}>
+          onPress={() => navigation.navigate("SignIn")}
+          disabled={loading}
+        >
           Already have an account? Sign In
         </Button>
       </View>
@@ -254,17 +259,17 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 24,
     gap: 12,
   },
   title: {
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontWeight: "bold",
     marginBottom: 8,
   },
   subtitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 32,
     opacity: 0.7,
   },

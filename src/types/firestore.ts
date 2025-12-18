@@ -1,7 +1,7 @@
-import {Timestamp} from 'firebase/firestore';
+import { Timestamp } from "firebase/firestore";
 
 export interface UserPreferences {
-  theme: 'dark' | 'light' | 'system';
+  theme: "dark" | "light" | "system";
   reminderTime?: string;
 }
 

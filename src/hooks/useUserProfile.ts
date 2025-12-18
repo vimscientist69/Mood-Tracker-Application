@@ -1,12 +1,12 @@
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {doc, getDoc, setDoc, updateDoc, Timestamp} from 'firebase/firestore';
-import {useAuth, useUser} from '@clerk/clerk-expo';
-import {db, USERS_COLLECTION} from '../services/firebase';
-import {UserDocument} from '../types/firestore';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { doc, getDoc, setDoc, updateDoc, Timestamp } from "firebase/firestore";
+import { useAuth, useUser } from "@clerk/clerk-expo";
+import { db, USERS_COLLECTION } from "../services/firebase";
+import { UserDocument } from "../types/firestore";
 
 export const useUserProfile = () => {
-  const {userId, isLoaded} = useAuth();
-  const {user} = useUser();
+  const { userId, isLoaded } = useAuth();
+  const { user } = useUser();
   const queryClient = useQueryClient();
 
   const fetchUserProfile = async (): Promise<UserDocument | null> => {
@@ -22,11 +22,11 @@ export const useUserProfile = () => {
       // Check if we need to create the user profile on first login
       // Ideally this is done via Cloud Functions, but client-side creation is okay here
       const newProfile: UserDocument = {
-        displayName: user?.fullName || '',
-        email: user?.primaryEmailAddress?.emailAddress || '',
+        displayName: user?.fullName || "",
+        email: user?.primaryEmailAddress?.emailAddress || "",
         createdAt: Timestamp.now(),
         preferences: {
-          theme: 'system',
+          theme: "system",
         },
         stats: {
           currentStreak: 0,
@@ -39,7 +39,7 @@ export const useUserProfile = () => {
   };
 
   const query = useQuery({
-    queryKey: ['user', userId],
+    queryKey: ["user", userId],
     queryFn: fetchUserProfile,
     enabled: !!isLoaded && !!userId,
   });
@@ -47,13 +47,13 @@ export const useUserProfile = () => {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Partial<UserDocument>) => {
       if (!userId) {
-        throw new Error('No user ID');
+        throw new Error("No user ID");
       }
       const docRef = doc(db, USERS_COLLECTION, userId);
       await updateDoc(docRef, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['user', userId]});
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
     },
   });
 

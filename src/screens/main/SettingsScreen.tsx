@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, StyleSheet, Animated, Easing} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { View, StyleSheet, Animated, Easing } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Button,
   Text,
@@ -175,13 +175,7 @@ export const SettingsScreen = () => {
                     title="Dark Mode"
                     titleStyle={{fontSize: responsiveFontSizes.md}}
                     left={ListIconTheme}
-                    right={() =>
-                      DarkThemeToggleSwitch({
-                        scaleAnim,
-                        isDark,
-                        handleThemeToggle,
-                      })
-                    }
+                    right={DarkThemeToggleSwitch}
                     style={styles.listItem}
                   />
                 </View>

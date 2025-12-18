@@ -1,11 +1,11 @@
 export const doc = jest.fn((db, collection, id) => ({
-  id: id || 'mock-doc-id',
+  id: id || "mock-doc-id",
   collection: collection,
   get: jest.fn(() =>
     Promise.resolve({
       exists: () => true,
       data: () => ({}),
-      id: id || 'mock-doc-id',
+      id: id || "mock-doc-id",
     }),
   ),
   set: jest.fn(() => Promise.resolve()),
@@ -17,7 +17,7 @@ export const getDoc = jest.fn(() =>
   Promise.resolve({
     exists: () => true,
     data: () => ({}),
-    id: 'mock-doc-id',
+    id: "mock-doc-id",
   }),
 );
 
@@ -34,11 +34,15 @@ export const getDocs = jest.fn(() =>
     size: 0,
     forEach: (callback: any) => callback({}),
     docChanges: () => [],
-    metadata: {hasPendingWrites: false, fromCache: false, isEqual: () => true},
+    metadata: {
+      hasPendingWrites: false,
+      fromCache: false,
+      isEqual: () => true,
+    },
   }),
 );
 
-export const query = jest.fn(ref => ref);
+export const query = jest.fn((ref) => ref);
 export const where = jest.fn(() => ({}));
 export const orderBy = jest.fn(() => ({}));
 
@@ -48,7 +52,7 @@ export const Timestamp = {
     seconds: Math.floor(Date.now() / 1000),
     nanoseconds: 0,
   })),
-  fromDate: jest.fn(date => ({
+  fromDate: jest.fn((date) => ({
     seconds: Math.floor(date.getTime() / 1000),
     nanoseconds: 0,
     toDate: () => date,
@@ -57,7 +61,7 @@ export const Timestamp = {
       other && other.seconds === Math.floor(date.getTime() / 1000),
     valueOf: () => date.toString(),
   })),
-  fromMillis: jest.fn(millis => ({
+  fromMillis: jest.fn((millis) => ({
     seconds: Math.floor(millis / 1000),
     nanoseconds: 0,
     toDate: () => new Date(millis),
