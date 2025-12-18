@@ -8,6 +8,7 @@ import {useAppTheme} from '@/context/ThemeContext';
 
 export const RootNavigator = () => {
   const {isLoaded, isSignedIn} = useAuth();
+  const {navTheme} = useAppTheme();
 
   if (!isLoaded) {
     return (
@@ -16,8 +17,6 @@ export const RootNavigator = () => {
       </View>
     );
   }
-
-  const {navTheme} = useAppTheme();
 
   return (
     <NavigationContainer theme={navTheme}>

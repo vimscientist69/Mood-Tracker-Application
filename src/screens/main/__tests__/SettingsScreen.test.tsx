@@ -10,7 +10,6 @@ jest.mock('@clerk/clerk-expo', () => ({
   useUser: () => ({user: {imageUrl: 'test-url', fullName: 'Test User'}}),
 }));
 
-const mockUpdateProfile = jest.fn();
 jest.mock('../../../hooks/useUserProfile', () => ({
   useUserProfile: () => ({
     data: {

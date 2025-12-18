@@ -1,4 +1,4 @@
-import { AppTheme, NavTheme } from '../theme/theme';
+import {AppTheme, NavTheme} from '../theme/theme';
 
 const mockColors = {
   primary: '#6200ee',
@@ -60,7 +60,7 @@ export const mockDarkTheme: AppTheme = {
   },
 };
 
-export const mockNavigationTheme : NavTheme = {
+export const mockNavigationTheme: NavTheme = {
   dark: false,
   colors: {
     ...mockColors,
@@ -91,7 +91,7 @@ export const mockNavigationTheme : NavTheme = {
   },
 };
 
-export const mockDarkNavigationTheme : NavTheme = {
+export const mockDarkNavigationTheme: NavTheme = {
   dark: true,
   colors: {
     ...mockDarkTheme.colors,

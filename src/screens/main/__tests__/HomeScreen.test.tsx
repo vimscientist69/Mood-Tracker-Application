@@ -92,7 +92,10 @@ describe('HomeScreen', () => {
 
     // Press Future Date (2025-12-25 > 2023-01-01)
     fireEvent.press(getByText('Press Future Date'));
-    expect(alert).toHaveBeenCalledWith('Future Date', 'You cannot log moods for future dates.');
+    expect(alert).toHaveBeenCalledWith(
+      'Future Date',
+      'You cannot log moods for future dates.',
+    );
     expect(navigate).not.toHaveBeenCalled();
 
     // Clear mocks

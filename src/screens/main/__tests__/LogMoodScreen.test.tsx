@@ -70,7 +70,9 @@ describe('LogMoodScreen', () => {
     };
     mockUseRoute.mockReturnValue({params: {initialLog}});
 
-    const {getByText, getByPlaceholderText} = renderWithTheme(<LogMoodScreen />);
+    const {getByText, getByPlaceholderText} = renderWithTheme(
+      <LogMoodScreen />,
+    );
 
     expect(getByText('Update your entry')).toBeTruthy();
     expect(getByText('Update Mood')).toBeTruthy();

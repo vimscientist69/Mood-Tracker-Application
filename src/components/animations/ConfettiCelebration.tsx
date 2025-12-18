@@ -1,13 +1,13 @@
-import React, { useRef, useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import React, {useRef, useEffect} from 'react';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import ConfettiCannon from 'react-native-confetti-cannon';
 
 export const ConfettiCelebration: React.FC<{
   isVisible: boolean;
   onComplete?: () => void;
   count?: number;
-  origin?: { x: number; y: number };
-}> = ({ isVisible, onComplete, count = 200, origin }) => {
+  origin?: {x: number; y: number};
+}> = ({isVisible, onComplete, count = 200, origin}) => {
   const confettiRef = useRef<ConfettiCannon>(null);
 
   useEffect(() => {
@@ -20,16 +20,18 @@ export const ConfettiCelebration: React.FC<{
     }
   }, [isVisible, onComplete]);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
-  const { width } = Dimensions.get('window');
-  
+  const {width} = Dimensions.get('window');
+
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <ConfettiCannon
         ref={confettiRef}
         count={count}
-        origin={origin || { x: width / 2, y: -10 }}
+        origin={origin || {x: width / 2, y: -10}}
         explosionSpeed={500}
         fallSpeed={3000}
         fadeOut
