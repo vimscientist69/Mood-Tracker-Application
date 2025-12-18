@@ -25,6 +25,8 @@ import {
     responsive as r,
     responsiveSpacing as rs,
     responsiveFontSizes as rf,
+    isTablet,
+    isDesktop,
 } from '../../utils/responsive';
 import { FONT_SIZES } from '@/theme/styleConstants';
 
@@ -44,8 +46,6 @@ export const AnalyticsScreen = () => {
     const [range, setRange] = useState<TimeRange>('7d');
     const [menuVisible, setMenuVisible] = useState(false);
     const { width } = useWindowDimensions();
-    const isTablet = width >= 600;
-    const isDesktop = width >= 1024;
 
     // Helper to filter logs by range
     const filteredLogs = useMemo(() => {

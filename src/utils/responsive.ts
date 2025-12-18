@@ -7,7 +7,7 @@ const guidelineBaseWidth = 375;
 const guidelineBaseHeight = 812;
 
 // Screen size detection
-export const isSmallDevice = width < 375;
+export const isSmallDevice = width < 450;
 export const isTablet = width >= 600 && width < 1024;
 export const isDesktop = width >= 1024;
 
