@@ -1,5 +1,13 @@
 # Mood Tracker Application
 
+[![React Native](https://img.shields.io/badge/React_Native-0.72.4-61DAFB?logo=react&logoColor=white)](https://reactnative.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Expo](https://img.shields.io/badge/Expo-SDK_49-000020?logo=expo&logoColor=white)](https://expo.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=white)](https://firebase.google.com/)
+[![Clerk](https://img.shields.io/badge/Clerk-Auth-3A85D3?logo=clerk&logoColor=white)](https://clerk.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform: iOS & Android](https://img.shields.io/badge/Platform-iOS%20%7C%20Android-000000?logo=apple&logoColor=white)](https://reactnative.dev/)
+
 A modern, cross-platform mobile application for tracking your mood and emotional well-being over time. Built with React Native, TypeScript, and Firebase, this app helps users log their daily moods, add notes, and visualize their emotional patterns through insightful analytics.
 
 ## 🌟 Features
