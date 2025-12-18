@@ -5,7 +5,6 @@ import {
   ScrollView,
   Platform,
   KeyboardAvoidingView,
-  useWindowDimensions,
 } from 'react-native';
 import {
   Button,
@@ -25,6 +24,7 @@ import {useMoodLogs} from '../../hooks/useMoodLogs';
 import {MoodLogDocument} from '../../types/firestore';
 import {ConfettiCelebration} from '../../components/animations/ConfettiCelebration';
 import alert from '@/components/alert';
+import { isDesktop, isTablet } from '@/utils/responsive';
 
 // Define the schema for the mood log
 const moodLogSchema = z.object({
@@ -58,9 +58,6 @@ export const LogMoodScreen = () => {
   const route = useRoute<any>();
   const {theme} = useAppTheme();
   const [showConfetti, setShowConfetti] = useState(false);
-  const { width } = useWindowDimensions();
-  const isTablet = width >= 600;
-  const isDesktop = width >= 1024;
 
   // Check if we are editing an existing log
   const initialLog = route.params?.initialLog as MoodLogDocument | undefined;

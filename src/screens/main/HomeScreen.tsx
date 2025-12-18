@@ -2,11 +2,11 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, FAB, Card } from 'react-native-paper';
-import { Calendar, DateData } from 'react-native-calendars';
+import { Calendar }  from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { useMoodLogs } from '../../hooks/useMoodLogs';
 import { getMoodColor } from '../../utils/moodLogic';
-import { responsive as r, responsiveSpacing as rs, responsiveFontSizes as rf, isTablet } from '../../utils/responsive';
+import { responsive as r, responsiveSpacing as rs, isTablet, isDesktop, isSmallDevice } from '../../utils/responsive';
 import { SkeletonLoader } from '../../components/animations/AnimatedComponents';
 import alert from '@/components/alert';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -16,9 +16,6 @@ export const HomeScreen = () => {
   const navigation = useNavigation<any>();
   const { logs, isLoading } = useMoodLogs();
   const [currentStreak, setCurrentStreak] = useState(0);
-  const { width } = useWindowDimensions();
-  const isTablet = width >= 600;
-  const isDesktop = width >= 1024;
 
   const markedDates = useMemo(() => {
     const marks: any = {};
@@ -197,20 +194,18 @@ export const HomeScreen = () => {
 
 
 
-  if (isLoading) {
-    const renderSkeletonCards = () => (
-      <View style={[styles.statsContainer, { paddingHorizontal: rs.lg }]}>
+  if (isLoading && isSmallDevice) {
+    const StatsCards = () => (
+      <View style={[styles.statsContainer, { width: '100%' }]}>
         {[1, 2].map((i) => (
           <SkeletonLoader
             key={i}
             style={[{
               flex: 1,
               height: 120,
-              marginHorizontal: rs.sm,
               borderRadius: r.borderRadius.medium,
               backgroundColor: theme.colors.surfaceVariant,
-              maxWidth: isTablet ? 300 : '100%',
-              alignSelf: isTablet ? 'flex-start' : 'center',
+              width: '100%',
             }]}
           />
         ))}
@@ -219,14 +214,15 @@ export const HomeScreen = () => {
 
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        {/* Title and subtitle Skeletons */}
         <View style={[styles.header, {
-          paddingHorizontal: isTablet ? rs.xl : rs.lg,
-          paddingTop: isTablet ? rs.xxl : rs.xl
+          paddingHorizontal: rs.lg,
+          paddingTop: rs.xl
         }]}>
           <SkeletonLoader
             style={[{
-              width: isTablet ? 400 : 280,
-              height: isTablet ? 40 : 32,
+              width: 280,
+              height: 32,
               marginBottom: rs.sm,
               borderRadius: r.borderRadius.small,
               backgroundColor: theme.colors.surfaceVariant,
@@ -234,8 +230,8 @@ export const HomeScreen = () => {
           />
           <SkeletonLoader
             style={[{
-              width: isTablet ? 300 : 220,
-              height: isTablet ? 24 : 20,
+              width: 220,
+              height: 20,
               borderRadius: r.borderRadius.small,
               backgroundColor: theme.colors.surfaceVariant,
             }]}
@@ -244,31 +240,20 @@ export const HomeScreen = () => {
 
         {/* Calendar Skeleton */}
         <View style={{
-          paddingHorizontal: isTablet ? rs.xl : rs.lg,
-          marginBottom: isTablet ? rs.xl : rs.lg
+          paddingHorizontal: rs.lg,
+          marginBottom: rs.lg
         }}>
           <SkeletonLoader
             style={[{
               width: '100%',
-              height: isTablet ? 400 : 350,
+              height: 350,
               borderRadius: r.borderRadius.medium,
-              maxWidth: 800,
               alignSelf: 'center',
               backgroundColor: theme.colors.surfaceVariant,
             }]}
           />
         </View>
-
-        {/* Stats Cards Skeleton */}
-        {isTablet ? (
-          <View style={{ flexDirection: 'row', paddingHorizontal: rs.xl }}>
-            {renderSkeletonCards()}
-          </View>
-        ) : (
-          <View style={{ paddingHorizontal: rs.lg }}>
-            {renderSkeletonCards()}
-          </View>
-        )}
+        <StatsCards />
       </SafeAreaView>
     );
   }
