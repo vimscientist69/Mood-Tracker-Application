@@ -1,4 +1,4 @@
-import {create} from 'zustand';
+import { create } from "zustand";
 
 interface AppState {
   isOffline: boolean;
@@ -7,9 +7,9 @@ interface AppState {
   toggleTheme: () => void;
 }
 
-export const useAppStore = create<AppState>(set => ({
+export const useAppStore = create<AppState>((set) => ({
   isOffline: false,
   isDarkMode: true, // Default to true based on previous requirements
-  setOfflineStatus: status => set({isOffline: status}),
-  toggleTheme: () => set(state => ({isDarkMode: !state.isDarkMode})),
+  setOfflineStatus: (status) => set({ isOffline: status }),
+  toggleTheme: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
 }));

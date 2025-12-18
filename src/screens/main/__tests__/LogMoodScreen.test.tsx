@@ -1,7 +1,7 @@
-import React from 'react';
-import {fireEvent, waitFor} from '@testing-library/react-native';
-import {LogMoodScreen} from '../LogMoodScreen';
-import {renderWithTheme} from '../../../test-utils/theme-test-utils';
+import React from "react";
+import { fireEvent, waitFor } from "@testing-library/react-native";
+import { LogMoodScreen } from "../LogMoodScreen";
+import { renderWithTheme } from "../../../test-utils/theme-test-utils";
 
 // Mock dependencies
 const mockNavigate = jest.fn();
@@ -9,7 +9,7 @@ const mockGoBack = jest.fn();
 const mockSetOptions = jest.fn();
 const mockUseRoute = jest.fn();
 
-jest.mock('@react-navigation/native', () => ({
+jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({
     navigate: mockNavigate,
     goBack: mockGoBack,
@@ -22,7 +22,7 @@ const mockCreateLog = jest.fn();
 const mockUpdateLog = jest.fn();
 const mockDeleteLog = jest.fn();
 
-jest.mock('../../../hooks/useMoodLogs', () => ({
+jest.mock("../../../hooks/useMoodLogs", () => ({
   useMoodLogs: () => ({
     createLog: mockCreateLog,
     updateLog: mockUpdateLog,
@@ -33,11 +33,11 @@ jest.mock('../../../hooks/useMoodLogs', () => ({
   }),
 }));
 
-describe('LogMoodScreen', () => {
+describe("LogMoodScreen", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     // Default: Create Mode (no params)
-    mockUseRoute.mockReturnValue({params: {}});
+    mockUseRoute.mockReturnValue({ params: {} });
   });
 
   afterEach(() => {
@@ -46,50 +46,50 @@ describe('LogMoodScreen', () => {
     jest.clearAllMocks();
   });
 
-  it('renders correctly in Create Mode', () => {
-    const {getByText} = renderWithTheme(<LogMoodScreen />);
-    expect(getByText('How are you feeling?')).toBeTruthy();
-    expect(getByText('Save Mood')).toBeTruthy();
+  it("renders correctly in Create Mode", () => {
+    const { getByText } = renderWithTheme(<LogMoodScreen />);
+    expect(getByText("How are you feeling?")).toBeTruthy();
+    expect(getByText("Save Mood")).toBeTruthy();
   });
 
-  it('submits the form in Create Mode', async () => {
-    const {getByText} = renderWithTheme(<LogMoodScreen />);
-    fireEvent.press(getByText('Save Mood'));
+  it("submits the form in Create Mode", async () => {
+    const { getByText } = renderWithTheme(<LogMoodScreen />);
+    fireEvent.press(getByText("Save Mood"));
 
     await waitFor(() => {
       expect(mockCreateLog).toHaveBeenCalled();
     });
   });
 
-  it('renders correctly in Edit Mode and updates log', async () => {
+  it("renders correctly in Edit Mode and updates log", async () => {
     const initialLog = {
-      date: '2023-10-27',
+      date: "2023-10-27",
       moodRating: 5,
-      tags: ['Happy'],
-      note: 'Great day!',
+      tags: ["Happy"],
+      note: "Great day!",
     };
-    mockUseRoute.mockReturnValue({params: {initialLog}});
+    mockUseRoute.mockReturnValue({ params: { initialLog } });
 
-    const {getByText, getByPlaceholderText} = renderWithTheme(
+    const { getByText, getByPlaceholderText } = renderWithTheme(
       <LogMoodScreen />,
     );
 
-    expect(getByText('Update your entry')).toBeTruthy();
-    expect(getByText('Update Mood')).toBeTruthy();
+    expect(getByText("Update your entry")).toBeTruthy();
+    expect(getByText("Update Mood")).toBeTruthy();
     // Check if note is pre-filled
-    const noteInput = getByPlaceholderText('Write a thought...');
-    expect(noteInput.props.value).toBe('Great day!');
+    const noteInput = getByPlaceholderText("Write a thought...");
+    expect(noteInput.props.value).toBe("Great day!");
 
-    fireEvent.press(getByText('Update Mood'));
+    fireEvent.press(getByText("Update Mood"));
 
     await waitFor(() => {
       // Check that updateLog was called with form data matching initialLog (plus any changes if we made any)
       expect(mockUpdateLog).toHaveBeenCalledWith(
         expect.objectContaining({
           moodRating: 5,
-          tags: ['Happy'],
-          note: 'Great day!',
-          date: '2023-10-27',
+          tags: ["Happy"],
+          note: "Great day!",
+          date: "2023-10-27",
         }),
         expect.anything(),
       );

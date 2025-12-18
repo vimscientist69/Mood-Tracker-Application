@@ -4,35 +4,39 @@ import {
   writeBatch,
   doc,
   Timestamp,
-} from 'firebase/firestore';
-import {db, USERS_COLLECTION, MOOD_LOGS_COLLECTION} from '../services/firebase';
+} from "firebase/firestore";
+import {
+  db,
+  USERS_COLLECTION,
+  MOOD_LOGS_COLLECTION,
+} from "../services/firebase";
 
 // Predefined mood tags for random selection
 const MOOD_TAGS = [
-  'happy',
-  'sad',
-  'anxious',
-  'calm',
-  'energetic',
-  'tired',
-  'stressed',
-  'relaxed',
-  'excited',
-  'bored',
-  'grateful',
-  'frustrated',
-  'content',
-  'overwhelmed',
-  'peaceful',
+  "happy",
+  "sad",
+  "anxious",
+  "calm",
+  "energetic",
+  "tired",
+  "stressed",
+  "relaxed",
+  "excited",
+  "bored",
+  "grateful",
+  "frustrated",
+  "content",
+  "overwhelmed",
+  "peaceful",
 ];
 
 // Simple placeholder journal entries
 const JOURNAL_ENTRIES = [
-  'Had a good day today.',
-  'Feeling okay overall.',
-  'Just another day.',
-  'Things went well.',
-  'Could be better.',
+  "Had a good day today.",
+  "Feeling okay overall.",
+  "Just another day.",
+  "Things went well.",
+  "Could be better.",
 ];
 
 /**
@@ -43,9 +47,9 @@ export const deleteAllMoodData = async (userId: string): Promise<void> => {
   console.log(`deleteAllMoodData called for userId: ${userId}`);
   if (!userId) {
     console.error(
-      'deleteAllMoodData requires a userId, but none was provided.',
+      "deleteAllMoodData requires a userId, but none was provided.",
     );
-    throw new Error('User ID is required');
+    throw new Error("User ID is required");
   }
 
   const logsRef = collection(
@@ -56,12 +60,12 @@ export const deleteAllMoodData = async (userId: string): Promise<void> => {
   );
 
   try {
-    console.log('Fetching mood log references to delete...');
+    console.log("Fetching mood log references to delete...");
     // Get all documents
     const snapshot = await getDocs(logsRef);
 
     if (snapshot.empty) {
-      console.log('No mood data to delete for this user.');
+      console.log("No mood data to delete for this user.");
       return;
     }
 
@@ -73,7 +77,7 @@ export const deleteAllMoodData = async (userId: string): Promise<void> => {
     let currentBatch = writeBatch(db);
     let operationCount = 0;
 
-    snapshot.docs.forEach(document => {
+    snapshot.docs.forEach((document) => {
       currentBatch.delete(document.ref);
       operationCount++;
 
@@ -94,13 +98,13 @@ export const deleteAllMoodData = async (userId: string): Promise<void> => {
 
     console.log(`Committing ${batches.length} batches...`);
     // Commit all batches
-    await Promise.all(batches.map(batch => batch.commit()));
+    await Promise.all(batches.map((batch) => batch.commit()));
 
     console.log(
       `Successfully deleted ${snapshot.docs.length} mood log entries.`,
     );
   } catch (error) {
-    console.error('Error during the deletion process:', error);
+    console.error("Error during the deletion process:", error);
     // Re-throw the error so the calling function can handle it
     throw error;
   }
@@ -130,7 +134,7 @@ export const populateRandomMoodData = async (
   userId: string,
 ): Promise<number> => {
   if (!userId) {
-    throw new Error('User ID is required');
+    throw new Error("User ID is required");
   }
 
   const logsRef = collection(
@@ -170,7 +174,7 @@ export const populateRandomMoodData = async (
 
   for (const date of selectedDates) {
     // Format date as YYYY-MM-DD
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = date.toISOString().split("T")[0];
 
     // Generate random mood data
     const moodRating = getRandomInt(1, 5);
@@ -214,7 +218,7 @@ export const populateRandomMoodData = async (
   }
 
   // Commit all batches asynchronously
-  await Promise.all(batches.map(batch => batch.commit()));
+  await Promise.all(batches.map((batch) => batch.commit()));
 
   console.log(`Created ${totalEntries} random mood log entries`);
   return totalEntries;

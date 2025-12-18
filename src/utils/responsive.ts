@@ -1,6 +1,6 @@
-import {Dimensions} from 'react-native';
+import { Dimensions } from "react-native";
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 // Guideline sizes are based on standard ~5" screen mobile device
 const guidelineBaseWidth = 375;
@@ -54,7 +54,7 @@ export const grid = {
   gutter: 16 * spacingMultiplier,
   column: (width - 16 * 2) / 12, // 16 = default padding
   container: {
-    width: isDesktop ? 1200 : '100%',
+    width: isDesktop ? 1200 : "100%",
     paddingHorizontal: isDesktop ? 24 : 16,
   },
 } as const;

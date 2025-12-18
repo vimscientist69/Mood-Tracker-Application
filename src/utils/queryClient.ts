@@ -1,15 +1,15 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   QueryClient,
   onlineManager,
   QueryClientConfig,
   QueryKey,
-} from '@tanstack/react-query';
-import NetInfo from '@react-native-community/netinfo';
-import {AppState, Platform} from 'react-native';
+} from "@tanstack/react-query";
+import NetInfo from "@react-native-community/netinfo";
+import { AppState, Platform } from "react-native";
 
 // Custom cache key for AsyncStorage
-const CACHE_KEY = 'REACT_QUERY_OFFLINE_CACHE';
+const CACHE_KEY = "REACT_QUERY_OFFLINE_CACHE";
 
 // Custom cache interface
 type QueryCache = {
@@ -25,8 +25,8 @@ const persistCache = async (queryClient: QueryClient) => {
 
     const cacheData: Record<string, QueryCache> = {};
 
-    queries.forEach(({queryKey, state}) => {
-      if (state.status === 'success' && state.data) {
+    queries.forEach(({ queryKey, state }) => {
+      if (state.status === "success" && state.data) {
         cacheData[JSON.stringify(queryKey)] = {
           timestamp: Date.now(),
           data: state.data,
@@ -36,7 +36,7 @@ const persistCache = async (queryClient: QueryClient) => {
 
     await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
   } catch (error) {
-    console.error('Error persisting cache:', error);
+    console.error("Error persisting cache:", error);
   }
 };
 
@@ -52,34 +52,34 @@ const restoreCache = async (queryClient: QueryClient) => {
     const cache = queryClient.getQueryCache();
 
     await Promise.all(
-      Object.entries(cacheData).map(async ([key, {data}]) => {
+      Object.entries(cacheData).map(async ([key, { data }]) => {
         try {
           const queryKey = JSON.parse(key) as QueryKey;
           // Only set the cache if we don't already have fresh data
-          const existingQuery = cache.find({queryKey});
+          const existingQuery = cache.find({ queryKey });
           if (!existingQuery || !existingQuery.state.data) {
             queryClient.setQueryData(queryKey, data);
           }
         } catch (e) {
-          console.error('Error restoring query:', e);
+          console.error("Error restoring query:", e);
           return Promise.resolve();
         }
       }),
     );
   } catch (error) {
-    console.error('Error restoring cache:', error);
+    console.error("Error restoring cache:", error);
   }
 };
 
 // Set up network status detection
 const setupNetworkStatus = () => {
   // Initial network status check
-  NetInfo.fetch().then(state => {
+  NetInfo.fetch().then((state) => {
     onlineManager.setOnline(state.isConnected ?? false);
   });
 
   // Subscribe to network status changes
-  return NetInfo.addEventListener(state => {
+  return NetInfo.addEventListener((state) => {
     const isOnline = state.isConnected ?? false;
     onlineManager.setOnline(isOnline);
 
@@ -97,13 +97,13 @@ const queryConfig: QueryClientConfig = {
       gcTime: 1000 * 60 * 60 * 24, // 24 hours
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 3,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
-      networkMode: 'offlineFirst', // Try cache first, then network
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+      networkMode: "offlineFirst", // Try cache first, then network
     },
     mutations: {
-      networkMode: 'offlineFirst',
+      networkMode: "offlineFirst",
       retry: 3,
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
   },
 };
@@ -146,9 +146,9 @@ export const cacheUtils = {
 };
 
 // Set up automatic cache persistence when the app goes to background
-if (Platform.OS !== 'web') {
-  AppState.addEventListener('change', (state: string) => {
-    if (state === 'background') {
+if (Platform.OS !== "web") {
+  AppState.addEventListener("change", (state: string) => {
+    if (state === "background") {
       persistCache(queryClient);
     }
   });

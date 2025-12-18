@@ -3,7 +3,7 @@ const initializeApp = jest.fn(() => ({}));
 const getApps = jest.fn(() => [{}]);
 const getApp = jest.fn(() => ({}));
 
-export {initializeApp, getApps, getApp};
+export { initializeApp, getApps, getApp };
 
 export default {
   initializeApp,

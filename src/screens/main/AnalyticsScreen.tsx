@@ -1,6 +1,11 @@
-import React, {useMemo, useState} from 'react';
-import {View, StyleSheet, ScrollView, useWindowDimensions} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Text,
   ActivityIndicator,
@@ -8,42 +13,42 @@ import {
   Chip,
   Menu,
   Button,
-} from 'react-native-paper';
-import {PieChart, LineChart} from 'react-native-gifted-charts';
-import {useMoodLogs} from '../../hooks/useMoodLogs';
-import {useAppTheme} from '../../context/ThemeContext';
-import {format, parseISO} from 'date-fns';
-import {MOOD_COLORS_MAP} from '../../utils/moodLogic';
+} from "react-native-paper";
+import { PieChart, LineChart } from "react-native-gifted-charts";
+import { useMoodLogs } from "../../hooks/useMoodLogs";
+import { useAppTheme } from "../../context/ThemeContext";
+import { format, parseISO } from "date-fns";
+import { MOOD_COLORS_MAP } from "../../utils/moodLogic";
 import {
   TimeRange,
   filterLogsByDate,
   calculateMoodCounts,
   calculateAverageMood,
   calculateTopTags,
-} from '../../utils/analyticsLogic';
+} from "../../utils/analyticsLogic";
 import {
   responsive as r,
   responsiveSpacing as rs,
   responsiveFontSizes as rf,
   isTablet,
   isDesktop,
-} from '../../utils/responsive';
+} from "../../utils/responsive";
 
 const RANGE_LABELS: Record<TimeRange, string> = {
-  '7d': 'Last 7 Days',
-  '30d': 'Last 30 Days',
-  '3m': 'Last 3 Months',
-  '6m': 'Last 6 Months',
-  '1y': 'Last Year',
-  all: 'All Time',
+  "7d": "Last 7 Days",
+  "30d": "Last 30 Days",
+  "3m": "Last 3 Months",
+  "6m": "Last 6 Months",
+  "1y": "Last Year",
+  all: "All Time",
 };
 
 export const AnalyticsScreen = () => {
-  const {theme} = useAppTheme();
-  const {logs, isLoading} = useMoodLogs();
-  const [range, setRange] = useState<TimeRange>('7d');
+  const { theme } = useAppTheme();
+  const { logs, isLoading } = useMoodLogs();
+  const [range, setRange] = useState<TimeRange>("7d");
   const [menuVisible, setMenuVisible] = useState(false);
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   // Helper to filter logs by range
   const filteredLogs = useMemo(() => {
@@ -61,11 +66,11 @@ export const AnalyticsScreen = () => {
 
   const moodData: MoodData = useMemo(
     () => ({
-      1: {emoji: '😢', color: MOOD_COLORS_MAP[1], label: 'Very Sad'},
-      2: {emoji: '😕', color: MOOD_COLORS_MAP[2], label: 'Sad'},
-      3: {emoji: '😐', color: MOOD_COLORS_MAP[3], label: 'Neutral'},
-      4: {emoji: '🙂', color: MOOD_COLORS_MAP[4], label: 'Happy'},
-      5: {emoji: '🤩', color: MOOD_COLORS_MAP[5], label: 'Very Happy'},
+      1: { emoji: "😢", color: MOOD_COLORS_MAP[1], label: "Very Sad" },
+      2: { emoji: "😕", color: MOOD_COLORS_MAP[2], label: "Sad" },
+      3: { emoji: "😐", color: MOOD_COLORS_MAP[3], label: "Neutral" },
+      4: { emoji: "🙂", color: MOOD_COLORS_MAP[4], label: "Happy" },
+      5: { emoji: "🤩", color: MOOD_COLORS_MAP[5], label: "Very Happy" },
     }),
     [],
   );
@@ -94,10 +99,10 @@ export const AnalyticsScreen = () => {
       a.date.localeCompare(b.date),
     );
 
-    return sorted.map(log => ({
+    return sorted.map((log) => ({
       value: log.moodRating,
-      label: format(parseISO(log.date), 'dd/MM'),
-      dataPointText: '', // Remove text from points for cleaner look
+      label: format(parseISO(log.date), "dd/MM"),
+      dataPointText: "", // Remove text from points for cleaner look
       labelTextStyle: {
         color: theme.colors.onSurfaceVariant,
         fontSize: rf.xs,
@@ -112,7 +117,7 @@ export const AnalyticsScreen = () => {
 
   const averageMood = useMemo(() => {
     const avg = calculateAverageMood(filteredLogs);
-    return typeof avg === 'number' ? avg : 0;
+    return typeof avg === "number" ? avg : 0;
   }, [filteredLogs]);
 
   if (isLoading) {
@@ -127,24 +132,25 @@ export const AnalyticsScreen = () => {
     <View style={styles.content}>
       {/* Stats Overview */}
       <View
-        style={[
-          styles.statsContainer,
-          isTablet && styles.tabletStatsContainer,
-        ]}>
+        style={[styles.statsContainer, isTablet && styles.tabletStatsContainer]}
+      >
         <Card
           style={[
             styles.statCard,
-            {backgroundColor: theme.colors.elevation.level2},
-          ]}>
+            { backgroundColor: theme.colors.elevation.level2 },
+          ]}
+        >
           <Card.Content style={styles.statCardContent}>
             <Text
               variant="labelMedium"
-              style={{color: theme.colors.onSurfaceVariant}}>
+              style={{ color: theme.colors.onSurfaceVariant }}
+            >
               Total Entries
             </Text>
             <Text
-              variant={isTablet ? 'displaySmall' : 'headlineMedium'}
-              style={[styles.statValue, {color: theme.colors.primary}]}>
+              variant={isTablet ? "displaySmall" : "headlineMedium"}
+              style={[styles.statValue, { color: theme.colors.primary }]}
+            >
               {filteredLogs.length}
             </Text>
           </Card.Content>
@@ -152,17 +158,20 @@ export const AnalyticsScreen = () => {
         <Card
           style={[
             styles.statCard,
-            {backgroundColor: theme.colors.elevation.level2},
-          ]}>
+            { backgroundColor: theme.colors.elevation.level2 },
+          ]}
+        >
           <Card.Content style={styles.statCardContent}>
             <Text
               variant="labelMedium"
-              style={{color: theme.colors.onSurfaceVariant}}>
+              style={{ color: theme.colors.onSurfaceVariant }}
+            >
               Avg. Mood
             </Text>
             <Text
-              variant={isTablet ? 'displaySmall' : 'headlineMedium'}
-              style={[styles.statValue, {color: theme.colors.primary}]}>
+              variant={isTablet ? "displaySmall" : "headlineMedium"}
+              style={[styles.statValue, { color: theme.colors.primary }]}
+            >
               {averageMood.toFixed(1)}
             </Text>
           </Card.Content>
@@ -173,12 +182,14 @@ export const AnalyticsScreen = () => {
       <Card
         style={[
           styles.chartCard,
-          {backgroundColor: theme.colors.elevation.level2},
-        ]}>
+          { backgroundColor: theme.colors.elevation.level2 },
+        ]}
+      >
         <Card.Content>
           <Text
             variant="titleMedium"
-            style={{marginBottom: rs.md, color: theme.colors.onSurface}}>
+            style={{ marginBottom: rs.md, color: theme.colors.onSurface }}
+          >
             Mood Distribution
           </Text>
           <View style={styles.chartContainer}>
@@ -195,12 +206,12 @@ export const AnalyticsScreen = () => {
                   centerLabelComponent={pieChartLabel}
                 />
                 <View style={styles.legendContainer}>
-                  {pieData.map(item => (
+                  {pieData.map((item) => (
                     <View key={item.moodKey} style={styles.legendItem}>
                       <View
                         style={[
                           styles.legendColor,
-                          {backgroundColor: item.color},
+                          { backgroundColor: item.color },
                         ]}
                       />
                       <Text
@@ -208,8 +219,9 @@ export const AnalyticsScreen = () => {
                         style={{
                           color: theme.colors.onSurfaceVariant,
                           marginLeft: rs.xs,
-                        }}>
-                        {moodData[item.moodKey].emoji}{' '}
+                        }}
+                      >
+                        {moodData[item.moodKey].emoji}{" "}
                         {moodData[item.moodKey].label}
                       </Text>
                       <Text
@@ -218,7 +230,8 @@ export const AnalyticsScreen = () => {
                           color: theme.colors.onSurfaceVariant,
                           marginLeft: rs.xs,
                           opacity: 0.7,
-                        }}>
+                        }}
+                      >
                         ({Math.round((item.value / filteredLogs.length) * 100)}
                         %)
                       </Text>
@@ -228,7 +241,7 @@ export const AnalyticsScreen = () => {
               </View>
             ) : (
               <View style={styles.noDataContainer}>
-                <Text style={{color: theme.colors.onSurfaceVariant}}>
+                <Text style={{ color: theme.colors.onSurfaceVariant }}>
                   No data available
                 </Text>
               </View>
@@ -241,12 +254,14 @@ export const AnalyticsScreen = () => {
       <Card
         style={[
           styles.chartCard,
-          {backgroundColor: theme.colors.elevation.level2},
-        ]}>
+          { backgroundColor: theme.colors.elevation.level2 },
+        ]}
+      >
         <Card.Content>
           <Text
             variant="titleMedium"
-            style={{marginBottom: rs.md, color: theme.colors.onSurface}}>
+            style={{ marginBottom: rs.md, color: theme.colors.onSurface }}
+          >
             Mood Trend
           </Text>
           <View style={styles.chartContainer}>
@@ -288,7 +303,7 @@ export const AnalyticsScreen = () => {
               />
             ) : (
               <View style={styles.noDataContainer}>
-                <Text style={{color: theme.colors.onSurfaceVariant}}>
+                <Text style={{ color: theme.colors.onSurfaceVariant }}>
                   Not enough data to show trend
                 </Text>
               </View>
@@ -302,16 +317,18 @@ export const AnalyticsScreen = () => {
         <Card
           style={[
             styles.chartCard,
-            {backgroundColor: theme.colors.elevation.level2},
-          ]}>
+            { backgroundColor: theme.colors.elevation.level2 },
+          ]}
+        >
           <Card.Content>
             <Text
               variant="titleMedium"
-              style={{marginBottom: rs.md, color: theme.colors.onSurface}}>
+              style={{ marginBottom: rs.md, color: theme.colors.onSurface }}
+            >
               Top Mood Tags
             </Text>
             <View style={styles.tagsContainer}>
-              {topTags.map(tag => (
+              {topTags.map((tag) => (
                 <Chip
                   key={tag.tag}
                   mode="outlined"
@@ -322,7 +339,8 @@ export const AnalyticsScreen = () => {
                       backgroundColor: `${theme.colors.primary}10`,
                     },
                   ]}
-                  textStyle={{color: theme.colors.primary}}>
+                  textStyle={{ color: theme.colors.primary }}
+                >
                   {tag.tag} ({tag.count})
                 </Chip>
               ))}
@@ -338,8 +356,9 @@ export const AnalyticsScreen = () => {
       <View
         style={[
           styles.loadingContainer,
-          {backgroundColor: theme.colors.background},
-        ]}>
+          { backgroundColor: theme.colors.background },
+        ]}
+      >
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
@@ -348,13 +367,15 @@ export const AnalyticsScreen = () => {
   const pieChartLabel = () => (
     <View style={styles.pieCenterLabel}>
       <Text
-        variant={isTablet ? 'headlineSmall' : 'titleMedium'}
-        style={{color: theme.colors.primary}}>
+        variant={isTablet ? "headlineSmall" : "titleMedium"}
+        style={{ color: theme.colors.primary }}
+      >
         {filteredLogs.length}
       </Text>
       <Text
-        variant={isTablet ? 'bodyMedium' : 'bodySmall'}
-        style={{color: theme.colors.onSurfaceVariant}}>
+        variant={isTablet ? "bodyMedium" : "bodySmall"}
+        style={{ color: theme.colors.onSurfaceVariant }}
+      >
         total
       </Text>
     </View>
@@ -362,18 +383,24 @@ export const AnalyticsScreen = () => {
 
   return (
     <SafeAreaView
-      style={[styles.container, {backgroundColor: theme.colors.background}]}>
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {isDesktop ? (
         <View style={styles.desktopContainer}>
           <View style={styles.desktopSidebar}>
             <Text
               variant="headlineSmall"
-              style={[styles.title, {color: theme.colors.onBackground}]}>
+              style={[styles.title, { color: theme.colors.onBackground }]}
+            >
               Analytics
             </Text>
             <Text
               variant="bodyMedium"
-              style={[styles.subtitle, {color: theme.colors.onSurfaceVariant}]}>
+              style={[
+                styles.subtitle,
+                { color: theme.colors.onSurfaceVariant },
+              ]}
+            >
               Track your mood patterns and insights
             </Text>
 
@@ -387,11 +414,13 @@ export const AnalyticsScreen = () => {
                     onPress={() => setMenuVisible(true)}
                     icon="calendar-range"
                     style={styles.rangeButton}
-                    contentStyle={styles.rangeButtonContent}>
+                    contentStyle={styles.rangeButtonContent}
+                  >
                     {RANGE_LABELS[range]}
                   </Button>
                 }
-                style={styles.rangeMenu}>
+                style={styles.rangeMenu}
+              >
                 {Object.entries(RANGE_LABELS).map(([key, label]) => (
                   <Menu.Item
                     key={key}
@@ -420,12 +449,17 @@ export const AnalyticsScreen = () => {
           <View style={styles.header}>
             <Text
               variant="headlineMedium"
-              style={[styles.title, {color: theme.colors.onBackground}]}>
+              style={[styles.title, { color: theme.colors.onBackground }]}
+            >
               Analytics
             </Text>
             <Text
               variant="bodyMedium"
-              style={[styles.subtitle, {color: theme.colors.onSurfaceVariant}]}>
+              style={[
+                styles.subtitle,
+                { color: theme.colors.onSurfaceVariant },
+              ]}
+            >
               Track your mood patterns and insights
             </Text>
           </View>
@@ -441,10 +475,12 @@ export const AnalyticsScreen = () => {
                   onPress={() => setMenuVisible(true)}
                   icon="calendar-range"
                   style={styles.rangeButton}
-                  contentStyle={styles.rangeButtonContent}>
+                  contentStyle={styles.rangeButtonContent}
+                >
                   {RANGE_LABELS[range]}
                 </Button>
-              }>
+              }
+            >
               {Object.entries(RANGE_LABELS).map(([key, label]) => (
                 <Menu.Item
                   key={key}
@@ -476,13 +512,13 @@ const styles = StyleSheet.create({
   },
   desktopContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   desktopSidebar: {
     width: 300,
     padding: rs.xl,
     borderRightWidth: 1,
-    borderRightColor: 'rgba(0,0,0,0.1)',
+    borderRightColor: "rgba(0,0,0,0.1)",
   },
   desktopScrollView: {
     flexGrow: 1,
@@ -501,7 +537,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   title: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: rs.xs,
   },
   subtitle: {
@@ -510,20 +546,20 @@ const styles = StyleSheet.create({
   rangeSelector: {
     margin: rs.lg,
     marginBottom: rs.xl,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   rangeButton: {
     borderRadius: r.borderRadius.medium,
   },
   rangeButtonContent: {
-    flexDirection: 'row-reverse',
+    flexDirection: "row-reverse",
   },
   rangeMenu: {
     marginTop: rs.md,
   },
   statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: rs.lg,
     paddingHorizontal: rs.lg,
   },
@@ -536,12 +572,12 @@ const styles = StyleSheet.create({
     borderRadius: r.borderRadius.medium,
   },
   statCardContent: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: rs.md,
   },
   statValue: {
-    fontWeight: 'bold',
-    color: '#ce93d8',
+    fontWeight: "bold",
+    color: "#ce93d8",
     marginTop: rs.xs,
   },
   chartCard: {
@@ -550,25 +586,25 @@ const styles = StyleSheet.create({
     borderRadius: r.borderRadius.medium,
   },
   chartContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
     minHeight: 200,
     padding: rs.md,
   },
   pieCenterLabel: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   noDataContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: 200,
   },
   tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginTop: rs.sm,
   },
   tagChip: {
@@ -578,28 +614,28 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   pieChartWrapper: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     gap: rs.lg,
-    width: '100%',
+    width: "100%",
   },
   legendContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: rs.sm,
     marginTop: rs.lg,
   },
   legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: rs.xs,
     paddingHorizontal: rs.sm,
     borderRadius: r.borderRadius.small,
-    backgroundColor: 'rgba(0,0,0,0.03)',
+    backgroundColor: "rgba(0,0,0,0.03)",
   },
   legendColor: {
     width: 16,
@@ -614,14 +650,14 @@ const styles = StyleSheet.create({
     marginRight: rs.xs,
   },
   menuButtonContent: {
-    flexDirection: 'row-reverse',
+    flexDirection: "row-reverse",
   },
   avgMoodValue: {
-    fontWeight: 'bold',
-    color: '#bb86fc', // theme.colors.primary
+    fontWeight: "bold",
+    color: "#bb86fc", // theme.colors.primary
   },
   pieChartContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   lineChartContainer: {
     marginLeft: -10,
