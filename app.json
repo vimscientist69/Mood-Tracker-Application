@@ -1,37 +1,53 @@
 {
   "expo": {
-    "name": "alma",
+    "name": "Alma Mood Tracker",
     "slug": "alma",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/small-logo.png",
-    "userInterfaceStyle": "light",
+    "platforms": ["android", "ios", "web"],
+    "backgroundColor": "#121212",
     "splash": {
       "image": "./assets/small-logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#030637"
+      "backgroundColor": "#121212",
+      "dark": {
+        "backgroundColor": "#121212"
+      }
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.willferns2000.alma"
+      "bundleIdentifier": "com.vimscientist69.alma-mood-tracker",
+      "icon": {
+        "light": "./assets/small-logo.png"
+      },
+      "splash": {
+        "backgroundColor": "#121212",
+        "image": "./assets/small-logo.png",
+        "tabletImage": "./assets/small-logo.png",
+        "dark": {
+          "backgroundColor": "#121212",
+          "image": "./assets/small-logo.png",
+          "tabletImage": "./assets/small-logo.png"
+        }
+      }
     },
     "android": {
+      "icon": "./assets/small-logo.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/small-logo.png",
-        "backgroundColor": "#030637"
+        "foregroundImage": "./assets/small-logo.png"
       },
-      "package": "com.willferns2000.alma"
+      "package": "com.vimscientist69.alma_mood_tracker"
     },
     "web": {
-      "favicon": "./assets/logo-without-text.png"
+      "favicon": "./assets/logo-without-text.png",
+      "backgroundColor": "#121212"
     },
     "extra": {
       "eas": {
         "projectId": "0666f15f-e663-423d-b47f-ceb02608cd80"
       }
-    }
+    },
+    "plugins": ["expo-secure-store", "expo-web-browser"]
   }
 }
