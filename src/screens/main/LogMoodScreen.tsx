@@ -268,42 +268,29 @@ export const LogMoodScreen = () => {
                         buttons={[
                           {
                             value: "1",
-                            label: isTablet ? "😢" : "😢",
+                            label: "😢",
                             style: styles.moodButton,
                           },
                           {
                             value: "2",
-                            label: isTablet ? "😕" : "😕",
+                            label: "😕",
                             style: styles.moodButton,
                           },
                           {
                             value: "3",
-                            label: isTablet ? "😐" : "😐",
+                            label: "😐",
                             style: styles.moodButton,
                           },
-                          ...(isTablet
-                            ? []
-                            : [
-                                {
-                                  value: "4",
-                                  label: "🙂",
-                                  style: styles.moodButton,
-                                },
-                              ]),
                           {
-                            value: isTablet ? "4" : "5",
-                            label: isTablet ? "🙂" : "🤩",
+                            value: "4",
+                            label: "🙂",
                             style: styles.moodButton,
                           },
-                          ...(isTablet
-                            ? [
-                                {
-                                  value: "5",
-                                  label: "🤩",
-                                  style: styles.moodButton,
-                                },
-                              ]
-                            : []),
+                          {
+                            value: "5",
+                            label: "🤩",
+                            style: styles.moodButton,
+                          },
                         ]}
                         style={[styles.moodButtons, isTablet && { height: 48 }]}
                         density={isTablet ? "regular" : "small"}

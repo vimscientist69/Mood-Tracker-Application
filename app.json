@@ -5,7 +5,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/small-logo.png",
-    "platforms": ["android", "ios", "web"],
+    "platforms": [
+      "android",
+      "ios",
+      "web"
+    ],
     "backgroundColor": "#121212",
     "splash": {
       "image": "./assets/small-logo.png",
@@ -14,7 +18,9 @@
         "backgroundColor": "#121212"
       }
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vimscientist69.alma-mood-tracker",
@@ -45,9 +51,13 @@
     },
     "extra": {
       "eas": {
-        "projectId": "0666f15f-e663-423d-b47f-ceb02608cd80"
+        "projectId": "75dcbacc-b80a-43f1-a1a5-6ad45b84570b"
       }
     },
-    "plugins": ["expo-secure-store", "expo-web-browser"]
+    "plugins": [
+      "expo-secure-store",
+      "expo-web-browser"
+    ],
+    "owner": "vimscientist69"
   }
 }

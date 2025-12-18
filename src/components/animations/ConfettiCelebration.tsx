@@ -27,13 +27,22 @@ export const ConfettiCelebration: React.FC<{
   const { width } = Dimensions.get("window");
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View 
+      style={[
+        StyleSheet.absoluteFill, 
+        { 
+          zIndex: 9999, // Ensure it's above other elements
+          elevation: 9999, // For Android
+          pointerEvents: 'none',
+        }
+      ]}
+    >
       <ConfettiCannon
         ref={confettiRef}
         count={count}
-        origin={origin || { x: width / 2, y: -10 }}
-        explosionSpeed={500}
-        fallSpeed={3000}
+        origin={origin || { x: width / 2, y: 0 }}
+        explosionSpeed={300}
+        fallSpeed={3500}
         fadeOut
         autoStart={false}
         colors={["#FF5252", "#FFD740", "#69F0AE", "#40C4FF", "#E040FB"]}
