@@ -1,5 +1,4 @@
-import { mockNavigationTheme, mockTheme } from '@/test-utils/theme-mock';
-import mockSafeAreaContext from 'react-native-safe-area-context/jest/mock';
+import {mockNavigationTheme, mockTheme} from '@/test-utils/theme-mock';
 
 // Mock Clerk
 jest.mock('@clerk/clerk-expo', () => ({
@@ -69,5 +68,5 @@ jest.mock('./src/context/ThemeContext', () => ({
     navTheme: mockNavigationTheme,
     isDark: false,
   })),
-  useToggleTheme: jest.fn()
+  useToggleTheme: jest.fn(),
 }));

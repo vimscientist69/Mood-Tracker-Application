@@ -9,8 +9,8 @@ jest.mock('react-native-gifted-charts', () => ({
   LineChart: () => null,
 }));
 
-jest.mock('firebase/app')
-jest.mock('firebase/firestore')
+jest.mock('firebase/app');
+jest.mock('firebase/firestore');
 
 jest.mock('../../../hooks/useMoodLogs', () => ({
   useMoodLogs: () => ({

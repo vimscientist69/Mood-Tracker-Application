@@ -8,10 +8,11 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
 
-const { LightTheme: LightNavTheme, DarkTheme: DarkNavTheme } = adaptNavigationTheme({
-  reactNavigationLight: NavigationDefaultTheme,
-  reactNavigationDark: NavigationDarkTheme,
-});
+const {LightTheme: LightNavTheme, DarkTheme: DarkNavTheme} =
+  adaptNavigationTheme({
+    reactNavigationLight: NavigationDefaultTheme,
+    reactNavigationDark: NavigationDarkTheme,
+  });
 
 // Common theme configuration
 const commonTheme = {
@@ -148,5 +149,3 @@ export const getTheme = (themeType: ThemeType): AppTheme => ({
 export const getNavigationTheme = (themeType: ThemeType): NavTheme => ({
   ...NavigationTheme[themeType],
 });
-
-const result = getNavigationTheme('light');

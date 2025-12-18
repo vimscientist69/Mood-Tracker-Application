@@ -1,46 +1,33 @@
-import { Alert, Platform, AlertButton } from 'react-native';
-
-type AlertOptions = {
-  cancelable?: boolean;
-  onDismiss?: () => void;
-  userInterfaceStyle?: 'light' | 'dark';
-};
+import {Alert, Platform, AlertButton} from 'react-native';
 
 type AlertButtonType = AlertButton & {
   style?: 'default' | 'cancel' | 'destructive';
   onPress?: (value?: string) => void;
 };
 
-const alertPolyfill = (
+const alert = (
   title: string,
-  description?: string,
-  options?: AlertButtonType[],
-  extra?: AlertOptions
-): void => {
-  const result = window.confirm([title, description].filter(Boolean).join('\n'));
-
-  if (result) {
-    const confirmOption = options?.find(({ style }) => style !== 'cancel');
-    confirmOption?.onPress?.();
+  message?: string,
+  buttons: AlertButtonType[] = [{text: 'OK'}],
+) => {
+  if (Platform.OS === 'web') {
+    // Fallback to native alert for web if needed
+    if (buttons.length === 1 && buttons[0].text === 'OK') {
+      window.alert([title, message].filter(Boolean).join('\n'));
+      return;
+    }
+    const result = window.confirm([title, message].filter(Boolean).join('\n'));
+    if (result) {
+      const confirmOption = buttons.find(({style}) => style !== 'cancel');
+      confirmOption?.onPress?.();
+    } else {
+      const cancelOption = buttons.find(({style}) => style === 'cancel');
+      cancelOption?.onPress?.();
+    }
   } else {
-    const cancelOption = options?.find(({ style }) => style === 'cancel');
-    cancelOption?.onPress?.();
+    // Use React Native's native alert for mobile
+    Alert.alert(title, message, buttons);
   }
 };
 
-const alert = Platform.OS === 'web' ? alertPolyfill : Alert.alert;
-
-export default alert as {
-  (
-    title: string,
-    message?: string,
-    buttons?: AlertButtonType[],
-    options?: AlertOptions
-  ): void;
-  (
-    title: string,
-    message?: string,
-    buttons?: AlertButtonType[],
-    options?: AlertOptions & { cancelable?: boolean }
-  ): void;
-};
+export default alert;

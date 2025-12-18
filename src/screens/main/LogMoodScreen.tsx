@@ -24,7 +24,7 @@ import {useMoodLogs} from '../../hooks/useMoodLogs';
 import {MoodLogDocument} from '../../types/firestore';
 import {ConfettiCelebration} from '../../components/animations/ConfettiCelebration';
 import alert from '@/components/alert';
-import { isDesktop, isTablet } from '@/utils/responsive';
+import {isDesktop, isTablet} from '@/utils/responsive';
 
 // Define the schema for the mood log
 const moodLogSchema = z.object({
@@ -125,24 +125,20 @@ export const LogMoodScreen = () => {
   };
 
   const onDelete = () => {
-    alert(
-      'Delete Mood Log',
-      'Are you sure you want to delete this mood log?',
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            if (initialLog?.date) {
-              deleteLog(initialLog.date, {
-                onSuccess: () => navigation.goBack(),
-              });
-            }
-          },
+    alert('Delete Mood Log', 'Are you sure you want to delete this mood log?', [
+      {text: 'Cancel', style: 'cancel'},
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          if (initialLog?.date) {
+            deleteLog(initialLog.date, {
+              onSuccess: () => navigation.goBack(),
+            });
+          }
         },
-      ],
-    );
+      },
+    ]);
   };
 
   const toggleTag = (tag: string) => {
@@ -172,7 +168,7 @@ export const LogMoodScreen = () => {
     };
 
     const gridStyle = {
-      flexDirection: isTablet ? 'row' as const : 'column' as const,
+      flexDirection: isTablet ? ('row' as const) : ('column' as const),
       flexWrap: 'wrap' as const,
       gap: 16,
     };
@@ -187,7 +183,7 @@ export const LogMoodScreen = () => {
       grid: gridStyle,
       section: sectionStyle,
     };
-  }, [isTablet, isDesktop]);
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -197,26 +193,37 @@ export const LogMoodScreen = () => {
       <View style={styles.container}>
         {showConfetti && <ConfettiCelebration isVisible={true} count={300} />}
         <ScrollView
-          contentContainerStyle={[styles.scrollViewContent, { paddingBottom: isTablet ? 40 : 100 }]}
+          contentContainerStyle={[
+            styles.scrollViewContent,
+            {paddingBottom: isTablet ? 40 : 100},
+          ]}
           keyboardShouldPersistTaps="handled">
           <View style={formLayout.container as any}>
-            <View style={[styles.headerRow, { marginBottom: isTablet ? 32 : 24 }]}>
-              <View style={{ flex: 1 }}>
-                <Text 
-                  variant={isTablet ? "headlineLarge" : "headlineMedium"} 
-                  style={[styles.title, { marginBottom: isTablet ? 12 : 8 }]}>
+            <View
+              style={[styles.headerRow, {marginBottom: isTablet ? 32 : 24}]}>
+              <View style={{flex: 1}}>
+                <Text
+                  variant={isTablet ? 'headlineLarge' : 'headlineMedium'}
+                  style={[styles.title, {marginBottom: isTablet ? 12 : 8}]}>
                   {isEditing ? 'Update your entry' : 'How are you feeling?'}
                 </Text>
-                <Text style={[styles.dateLabel, { 
-                  color: theme.colors.onSurfaceVariant,
-                  fontSize: isTablet ? 16 : 14
-                }]}>
-                  {new Date(initialLog?.date || today).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                <Text
+                  style={[
+                    styles.dateLabel,
+                    {
+                      color: theme.colors.onSurfaceVariant,
+                      fontSize: isTablet ? 16 : 14,
+                    },
+                  ]}>
+                  {new Date(initialLog?.date || today).toLocaleDateString(
+                    'en-US',
+                    {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    },
+                  )}
                 </Text>
               </View>
               {isEditing && (
@@ -226,14 +233,16 @@ export const LogMoodScreen = () => {
                   iconColor={theme.colors.error}
                   onPress={onDelete}
                   testID="delete-button"
-                  style={{ margin: 0, marginLeft: 8 }}
+                  style={{margin: 0, marginLeft: 8}}
                 />
               )}
             </View>
 
-            <View style={[formLayout.grid as any, { marginBottom: 16 }]}>
+            <View style={[formLayout.grid as any, {marginBottom: 16}]}>
               <View style={[styles.section, formLayout.section as any]}>
-                <Text variant="titleMedium" style={[styles.label, { fontSize: isTablet ? 18 : 16 }]}>
+                <Text
+                  variant="titleMedium"
+                  style={[styles.label, {fontSize: isTablet ? 18 : 16}]}>
                   Mood (1-5)
                 </Text>
                 <Controller
@@ -245,48 +254,95 @@ export const LogMoodScreen = () => {
                         value={String(value)}
                         onValueChange={val => onChange(Number(val))}
                         buttons={[
-                          {value: '1', label: isTablet ? '😢' : '😢', style: styles.moodButton},
-                          {value: '2', label: isTablet ? '😕' : '😕', style: styles.moodButton},
-                          {value: '3', label: isTablet ? '😐' : '😐', style: styles.moodButton},
-                          ...(isTablet ? [] : [{value: '4', label: '🙂', style: styles.moodButton}]),
-                          {value: isTablet ? '4' : '5', label: isTablet ? '🙂' : '🤩', style: styles.moodButton},
-                          ...(isTablet ? [{value: '5', label: '🤩', style: styles.moodButton}] : []),
+                          {
+                            value: '1',
+                            label: isTablet ? '😢' : '😢',
+                            style: styles.moodButton,
+                          },
+                          {
+                            value: '2',
+                            label: isTablet ? '😕' : '😕',
+                            style: styles.moodButton,
+                          },
+                          {
+                            value: '3',
+                            label: isTablet ? '😐' : '😐',
+                            style: styles.moodButton,
+                          },
+                          ...(isTablet
+                            ? []
+                            : [
+                                {
+                                  value: '4',
+                                  label: '🙂',
+                                  style: styles.moodButton,
+                                },
+                              ]),
+                          {
+                            value: isTablet ? '4' : '5',
+                            label: isTablet ? '🙂' : '🤩',
+                            style: styles.moodButton,
+                          },
+                          ...(isTablet
+                            ? [
+                                {
+                                  value: '5',
+                                  label: '🤩',
+                                  style: styles.moodButton,
+                                },
+                              ]
+                            : []),
                         ]}
-                        style={[styles.moodButtons, isTablet && { height: 48 }]}
+                        style={[styles.moodButtons, isTablet && {height: 48}]}
                         density={isTablet ? 'regular' : 'small'}
                       />
                     </View>
                   )}
                 />
                 {errors.moodRating && (
-                  <HelperText type="error" style={{ marginTop: 8 }}>{errors.moodRating.message}</HelperText>
+                  <HelperText type="error" style={{marginTop: 8}}>
+                    {errors.moodRating.message}
+                  </HelperText>
                 )}
               </View>
 
-              <View style={[styles.section, formLayout.section as any, { flex: isTablet ? 1 : undefined }]}>
-                <Text variant="titleMedium" style={[styles.label, { fontSize: isTablet ? 18 : 16 }]}>
+              <View
+                style={[
+                  styles.section,
+                  formLayout.section as any,
+                  {flex: isTablet ? 1 : undefined},
+                ]}>
+                <Text
+                  variant="titleMedium"
+                  style={[styles.label, {fontSize: isTablet ? 18 : 16}]}>
                   Tags
                 </Text>
-                <View style={[styles.chipContainer, { 
-                  justifyContent: isTablet ? 'flex-start' : 'center',
-                  padding: isTablet ? 8 : 0
-                }]}>
+                <View
+                  style={[
+                    styles.chipContainer,
+                    {
+                      justifyContent: isTablet ? 'flex-start' : 'center',
+                      padding: isTablet ? 8 : 0,
+                    },
+                  ]}>
                   {AVAILABLE_TAGS.map(tag => (
                     <Chip
                       key={tag}
                       selected={selectedTags?.includes(tag)}
                       onPress={() => toggleTag(tag)}
                       showSelectedOverlay
-                      style={[styles.chip, {
-                        height: isTablet ? 40 : 36,
-                        paddingHorizontal: isTablet ? 12 : 8,
-                        margin: isTablet ? 4 : 2,
-                      }]}
+                      style={[
+                        styles.chip,
+                        {
+                          height: isTablet ? 40 : 36,
+                          paddingHorizontal: isTablet ? 12 : 8,
+                          margin: isTablet ? 4 : 2,
+                        },
+                      ]}
                       textStyle={{
                         fontSize: isTablet ? 15 : 14,
                       }}
-                      selectedColor={theme.colors.primary}
-                    >
+                      selectedColor={theme.colors.primary}>
                       {tag}
                     </Chip>
                   ))}
@@ -294,8 +350,10 @@ export const LogMoodScreen = () => {
               </View>
             </View>
 
-            <View style={[styles.section, { marginTop: isTablet ? 16 : 0 }]}>
-              <Text variant="titleMedium" style={[styles.label, { fontSize: isTablet ? 18 : 16 }]}>
+            <View style={[styles.section, {marginTop: isTablet ? 16 : 0}]}>
+              <Text
+                variant="titleMedium"
+                style={[styles.label, {fontSize: isTablet ? 18 : 16}]}>
                 Note
               </Text>
               <Controller
@@ -333,11 +391,14 @@ export const LogMoodScreen = () => {
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               disabled={isLoading}
-              style={[styles.submitButton, {
-                marginTop: isTablet ? 24 : 16,
-                paddingVertical: isTablet ? 8 : 6,
-                borderRadius: 12,
-              }]}
+              style={[
+                styles.submitButton,
+                {
+                  marginTop: isTablet ? 24 : 16,
+                  paddingVertical: isTablet ? 8 : 6,
+                  borderRadius: 12,
+                },
+              ]}
               labelStyle={{
                 fontSize: isTablet ? 16 : 15,
                 paddingVertical: isTablet ? 6 : 4,
@@ -354,94 +415,95 @@ export const LogMoodScreen = () => {
   );
 };
 
-const getStyles = (theme: any) => StyleSheet.create({
-  keyboardAvoidingView: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    padding: 16,
-    paddingBottom: 100, // Extra space for FAB/keyboard
-    maxWidth: '100%',
-  },
-  container: {
-    flex: 1,
-    position: 'relative',
-    backgroundColor: theme.colors.background,
-    alignItems: 'center',
-  },
-  scrollContent: {
-    padding: 16,
-    width: '100%',
-    maxWidth: 1200,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginTop: 8,
-    width: '100%',
-  },
-  title: {
-    flex: 1,
-    textAlign: 'left',
-    color: theme.colors.onBackground,
-    fontWeight: '600',
-  },
-  dateLabel: {
-    textAlign: 'left',
-    opacity: 0.8,
-  },
-  section: {
-    marginBottom: 16,
-    backgroundColor: theme.colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    width: '100%',
-  },
-  label: {
-    marginBottom: 12,
-    fontWeight: '600',
-    color: theme.colors.onSurface,
-  },
-  moodContainer: {
-    width: '100%',
-    paddingVertical: 4,
-  },
-  moodButtons: {
-    height: 44,
-    width: '100%',
-  },
-  moodButton: {
-    flex: 1,
-    minWidth: 0,
-    paddingHorizontal: 4,
-    justifyContent: 'center',
-  },
-  chipContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  chip: {
-    margin: 2,
-    borderWidth: 1,
-    borderColor: theme.colors.outline,
-  },
-  submitButton: {
-    marginTop: 'auto',
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-});
+const getStyles = (theme: any) =>
+  StyleSheet.create({
+    keyboardAvoidingView: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scrollViewContent: {
+      flexGrow: 1,
+      padding: 16,
+      paddingBottom: 100, // Extra space for FAB/keyboard
+      maxWidth: '100%',
+    },
+    container: {
+      flex: 1,
+      position: 'relative',
+      backgroundColor: theme.colors.background,
+      alignItems: 'center',
+    },
+    scrollContent: {
+      padding: 16,
+      width: '100%',
+      maxWidth: 1200,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginTop: 8,
+      width: '100%',
+    },
+    title: {
+      flex: 1,
+      textAlign: 'left',
+      color: theme.colors.onBackground,
+      fontWeight: '600',
+    },
+    dateLabel: {
+      textAlign: 'left',
+      opacity: 0.8,
+    },
+    section: {
+      marginBottom: 16,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 16,
+      padding: 20,
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      width: '100%',
+    },
+    label: {
+      marginBottom: 12,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    },
+    moodContainer: {
+      width: '100%',
+      paddingVertical: 4,
+    },
+    moodButtons: {
+      height: 44,
+      width: '100%',
+    },
+    moodButton: {
+      flex: 1,
+      minWidth: 0,
+      paddingHorizontal: 4,
+      justifyContent: 'center',
+    },
+    chipContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    chip: {
+      margin: 2,
+      borderWidth: 1,
+      borderColor: theme.colors.outline,
+    },
+    submitButton: {
+      marginTop: 'auto',
+      borderRadius: 12,
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+  });
