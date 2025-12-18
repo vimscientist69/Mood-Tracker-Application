@@ -13,7 +13,7 @@ A modern, cross-platform mobile application for tracking your mood and emotional
 
 <img width="350" height="1600" alt="image" src="https://github.com/user-attachments/assets/f03e2259-be5c-4889-bb80-53daefbea96e" />
 <img width="350" height="1600" alt="image" src="https://github.com/user-attachments/assets/af06eb77-0f5c-48fb-9b0d-de748aa11ebb" />
-<img width="350" height="1600" alt="image" src="https://github.com/user-attachments/assets/9a19d5a1-96fe-481d-88cf-860494e085bd" />
+<img width="350" height="1600" alt="image" src="https://github.com/user-attachments/assets/674f505c-ebb5-4ffa-90f3-a1bd94aaa731" />
 <img width="350" height="1600" alt="image" src="https://github.com/user-attachments/assets/a6eb5d33-2c47-480c-a707-3a2b1e05ffa9" />
 
 
