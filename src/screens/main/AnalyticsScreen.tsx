@@ -116,8 +116,7 @@ export const AnalyticsScreen = () => {
   }, [filteredLogs]);
 
   const averageMood = useMemo(() => {
-    const avg = calculateAverageMood(filteredLogs);
-    return typeof avg === "number" ? avg : 0;
+    return calculateAverageMood(filteredLogs);
   }, [filteredLogs]);
 
   if (isLoading) {

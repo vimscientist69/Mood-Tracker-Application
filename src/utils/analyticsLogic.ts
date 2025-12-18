@@ -45,13 +45,13 @@ export const calculateMoodCounts = (logs: any[]) => {
   return counts;
 };
 
-// Calculate Average Mood
-export const calculateAverageMood = (logs: any[]): string => {
+// In src/utils/analyticsLogic.ts
+export const calculateAverageMood = (logs: any[]): number => {
   if (logs.length === 0) {
-    return "0";
+    return 0;
   }
   const sum = logs.reduce((acc, log) => acc + log.moodRating, 0);
-  return (sum / logs.length).toFixed(1);
+  return parseFloat((sum / logs.length).toFixed(1));
 };
 
 // Calculate Top Tags
