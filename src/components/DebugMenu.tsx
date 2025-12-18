@@ -130,7 +130,11 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <Pressable 
+        testID="debug-menu-backdrop"
+        style={styles.backdrop} 
+        onPress={onClose}
+      >
         <Animated.View
           style={[
             styles.modal,
@@ -168,7 +172,7 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
                   <Text style={styles.buttonIcon}>📊</Text>
                 )}
                 <Text style={styles.buttonText}>
-                  {isPopulating ? "Generating..." : "Generate Test Data"}
+                  {isPopulating ? "Generating..." : "Generate Test Mood Data"}
                 </Text>
               </Pressable>
 
@@ -191,7 +195,7 @@ export const DebugMenu: React.FC<DebugMenuProps> = ({ visible, onClose }) => {
                   <Text style={styles.buttonIcon}>🗑️</Text>
                 )}
                 <Text style={styles.buttonText}>
-                  {isDeleting ? "Deleting..." : "Delete All Data"}
+                  {isDeleting ? "Deleting..." : "Delete All Mood Data"}
                 </Text>
               </Pressable>
             </View>
