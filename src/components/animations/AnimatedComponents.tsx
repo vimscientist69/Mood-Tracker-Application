@@ -2,8 +2,9 @@ import React from "react";
 import { StyleSheet, Animated, ViewStyle, StyleProp } from "react-native";
 
 // Skeleton Loader Component
-export const SkeletonLoader: React.FC<{ style?: StyleProp<ViewStyle> }> = ({
+export const SkeletonLoader: React.FC<{ style?: StyleProp<ViewStyle>, testID?: string }> = ({
   style,
+  testID,
 }) => {
   const pulseAnim = React.useRef(new Animated.Value(0.5)).current;
 
@@ -27,7 +28,7 @@ export const SkeletonLoader: React.FC<{ style?: StyleProp<ViewStyle> }> = ({
   }, [pulseAnim]);
 
   return (
-    <Animated.View style={[styles.skeleton, { opacity: pulseAnim }, style]} />
+    <Animated.View testID={testID} style={[styles.skeleton, { opacity: pulseAnim }, style]} />
   );
 };
 
@@ -57,7 +58,8 @@ export const ScaleButton: React.FC<{
   onPress: () => void;
   scaleTo?: number;
   style?: StyleProp<ViewStyle>;
-}> = ({ children, onPress, scaleTo = 0.95, style }) => {
+  testID?: string;
+}> = ({ children, onPress, scaleTo = 0.95, style, testID }) => {
   const scaleValue = React.useRef(new Animated.Value(1)).current;
 
   const animatePress = () => {
@@ -78,7 +80,7 @@ export const ScaleButton: React.FC<{
   };
 
   return (
-    <Animated.View style={[{ transform: [{ scale: scaleValue }] }, style]}>
+    <Animated.View testID={testID} style={[{ transform: [{ scale: scaleValue }] }, style]}>
       {React.cloneElement(children, {
         onPress: animatePress,
       })}
