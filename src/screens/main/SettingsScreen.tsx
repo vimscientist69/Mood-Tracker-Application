@@ -42,10 +42,9 @@ const DarkThemeToggleSwitch = (props: any) => (
 export const SettingsScreen = () => {
   const {signOut} = useClerk();
   const {user} = useUser();
-  const {theme} = useAppTheme();
+  const {theme, isDark} = useAppTheme();
   const {data: userProfile} = useUserProfile();
   const toggleTheme = useToggleTheme();
-  const {isDark} = useAppTheme();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
 
@@ -175,7 +174,7 @@ export const SettingsScreen = () => {
                     title="Dark Mode"
                     titleStyle={{fontSize: responsiveFontSizes.md}}
                     left={ListIconTheme}
-                    right={DarkThemeToggleSwitch}
+                    right={() => <DarkThemeToggleSwitch isDark={isDark} handleThemeToggle={handleThemeToggle} scaleAnim={scaleAnim} />}
                     style={styles.listItem}
                   />
                 </View>
